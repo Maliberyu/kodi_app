@@ -36,13 +36,25 @@ Route::prefix('admin')->name('admin.')->group(function () {
 });
 
 // ==================== SISWA ROUTES ====================
-Route::prefix('siswa')->name('siswa.')->group(function () {
-    Route::middleware('auth')->group(function () {
-        Route::get('/home', [App\Http\Controllers\Siswa\DashboardController::class, 'index'])->name('home');
-        // Route::get('/game', fn() => view('siswa.game'))->name('game');
-        // Route::get('/ebook', fn() => view('siswa.ebook'))->name('ebook');
-    });
+// Route::prefix('siswa')->name('siswa.')->group(function () {
+//     Route::middleware('auth')->group(function () {
+//         Route::get('/home', [App\Http\Controllers\Siswa\DashboardController::class, 'index'])->name('home');
+//         // Route::get('/game', fn() => view('siswa.game'))->name('game');
+//          Route::get('/e-modul', fn() => view('e-modul'))->name('modules');
+//     });
+
+// });
+Route::prefix('siswa')->name('siswa.')->middleware('auth')->group(function () {
+
+    Route::get('/home', [App\Http\Controllers\Siswa\DashboardController::class, 'index'])
+        ->name('home');
+
+    Route::get('/e-modul', [App\Http\Controllers\Siswa\DashboardController::class, 'modules'])
+        ->name('modules');
+
 });
+
+
 
 // ==================== GURU ROUTES ====================
 Route::prefix('guru')->name('guru.')->group(function () {
@@ -73,6 +85,11 @@ Route::prefix('guru')->middleware('auth')->name('guru.')->group(function () {
 
 Route::get('/guru/home', [DashboardController::class, 'home'])->name('guru.home');
 Route::get('/guru/siswa', [DashboardController::class, 'siswaIndex'])->name('guru.siswa.index');
+//list emodul siswa
+// use App\Http\Controllers\Siswa\Controller as SiswaController;
+
+// Route::get('/siswa/ebook', [SiswaController::class, 'ebook'])->name('siswa.emodul');
+
 
 
 require __DIR__.'/auth.php';

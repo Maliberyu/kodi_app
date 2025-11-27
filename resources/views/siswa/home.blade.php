@@ -20,7 +20,7 @@
                     </p>
 
                     <div class="flex flex-col sm:flex-row justify-center gap-6">
-                        <a href="/siswa/ebook"
+                        <a href="{{ route('siswa.modules') }}"
                             class="px-8 py-4 bg-blue-500 hover:bg-blue-600 text-white font-bold text-lg rounded-xl shadow-md hover:shadow-lg transform hover:-translate-y-1 transition-all duration-200 w-full sm:w-auto text-center">
                             E-MODULE
                         </a>
@@ -50,39 +50,7 @@
                     </div>
 
                     <!-- === Daftar E-Module untuk siswa === -->
-                    <div class="mt-16 text-left">
-                        <h2 class="text-3xl font-extrabold text-gray-800 mb-6">
-                            📘 Daftar E-Module
-                        </h2>
-
-                        @if($modules->count() == 0)
-                            <p class="text-gray-600 text-lg">Belum ada modul tersedia.</p>
-                        @else
-                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                                @foreach($modules as $m)
-                                    <div class="bg-white bg-opacity-80 backdrop-blur-sm p-6 rounded-2xl shadow-lg border border-purple-100 hover:shadow-2xl transition">
-                                        <h3 class="text-xl font-bold text-purple-700">{{ $m->judul }}</h3>
-
-                                        <span class="inline-block px-4 py-1 mt-2 bg-indigo-100 text-indigo-700 rounded-full text-sm">
-                                            {{ $m->klasifikasi }}
-                                        </span>
-
-                                        @if($m->keterangan)
-                                            <p class="text-gray-600 mt-3 text-sm">
-                                                {{ Str::limit($m->keterangan, 100) }}
-                                            </p>
-                                        @endif
-
-                                        <a href="{{ $m->pdf_link }}" 
-                                           target="_blank"
-                                           class="mt-4 inline-block px-5 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm">
-                                            Buka Modul
-                                        </a>
-                                    </div>
-                                @endforeach
-                            </div>
-                        @endif
-                    </div>
+                   
 
                 </div>
             </div>

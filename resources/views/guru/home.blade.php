@@ -58,17 +58,27 @@
                             <p class="text-gray-500 mt-2">Kelola informasi siswa</p>
                         </a>
 
-                        <!-- Data Guru -->
+                        <!-- Data Rangking -->
+                         <a href="#" 
+                            class="group bg-white bg-opacity-90 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-blue-100 
+                                hover:shadow-2xl hover:shadow-blue-500/50 transition-all duration-500 transform 
+                                hover:-translate-y-2 hover:scale-105">
+                            <div class="text-4xl mb-4 text-blue-600 group-hover:rotate-6 transition-transform duration-300">
+                                🏆
+                            </div>
+                            <h3 class="text-2xl font-bold text-gray-700">Rangking </h3>
+                            <p class="text-gray-500 mt-2">Lihat potensi kecerdasan siswa</p>
+                         </a>
                         <!-- <a href="#" 
                             class="group bg-white bg-opacity-90 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-green-100 
                                 hover:shadow-2xl hover:shadow-green-500/50 transition-all duration-500 transform 
                                 hover:-translate-y-2 hover:scale-105">
                             <div class="text-4xl mb-4 text-green-600 group-hover:rotate-6 transition-transform duration-300">
-                                👨‍🏫
+                                🏆
                             </div>
-                            <h3 class="text-2xl font-bold text-gray-700">Data Guru</h3>
-                            <p class="text-gray-500 mt-2">Kelola informasi guru</p>
-                        </a> -->
+                            <h3 class="text-2xl font-bold text-gray-700">Rangking </h3>
+                            <p class="text-gray-500 mt-2">Lihat potensi kecerdasan siswa</p>
+                        </a> --> 
 
                        
                   <!-- <a href="#" 
