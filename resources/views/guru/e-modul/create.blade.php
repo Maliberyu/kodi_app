@@ -35,13 +35,13 @@
                                 required>
                             <option value="">-- Pilih Klasifikasi --</option>
                             <option value="Berpikir Kritis" {{ old('klasifikasi') == 'Berpikir Kritis' ? 'selected' : '' }}>
-                                Berpikir Kritis
+                                Berpikir Komputasional (BK)
                             </option>
                             <option value="Algoritma" {{ old('klasifikasi') == 'Algoritma' ? 'selected' : '' }}>
-                                Algoritma
+                                Algoritma & Pemrograman Dasar
                             </option>
                             <option value="Komputasional" {{ old('klasifikasi') == 'Komputasional' ? 'selected' : '' }}>
-                                Komputasional
+                                Kecerdasan Artifisial Dasar
                             </option>
                         </select>
                         @error('klasifikasi') <p class="text-red-500 text-sm mt-2">{{ $message }}</p> @enderror
