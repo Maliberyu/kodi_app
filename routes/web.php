@@ -72,13 +72,47 @@ Route::middleware('auth')->group(function () {
 });
 
 // e-Module routes for Guru
-
 Route::prefix('guru')->middleware('auth')->name('guru.')->group(function () {
+    // E-Modul
     Route::get('/e-modul', [EModuleController::class, 'index'])->name('e-modul.index');
     Route::get('/e-modul/create', [EModuleController::class, 'create'])->name('e-modul.create');
     Route::post('/e-modul', [EModuleController::class, 'store'])->name('e-modul.store');
     Route::delete('/e-modul/{id}', [EModuleController::class, 'destroy'])->name('e-modul.destroy');
+
+    // Quiz
+    Route::get('quiz', [App\Http\Controllers\Guru\QuizController::class, 'index'])->name('quiz.index');
+    Route::get('quiz/create', [App\Http\Controllers\Guru\QuizController::class, 'create'])->name('quiz.create');
+    Route::post('quiz/store', [App\Http\Controllers\Guru\QuizController::class, 'store'])->name('quiz.store');
+
+    // Edit & Update Quiz
+    Route::get('quiz/{quiz}/edit', [App\Http\Controllers\Guru\QuizController::class, 'edit'])->name('quiz.edit');
+    Route::put('quiz/{quiz}', [App\Http\Controllers\Guru\QuizController::class, 'update'])->name('quiz.update');
+
+    // Hapus Quiz
+    Route::delete('quiz/{quiz}', [App\Http\Controllers\Guru\QuizController::class, 'destroy'])->name('quiz.destroy');
+
+    // Questions
+    Route::get('quiz/{quiz_id}/questions', [App\Http\Controllers\Guru\QuestionController::class, 'index'])
+        ->name('quiz.questions.index'); // ✅ BENAR
+
+    Route::get('quiz/{quiz_id}/questions/create', [App\Http\Controllers\Guru\QuestionController::class, 'create'])
+        ->name('quiz.questions.create'); // ⚠️ Sebelumnya salah nama, harus 'quiz.questions.create'
+
+    Route::post('quiz/{quiz_id}/questions/store', [App\Http\Controllers\Guru\QuestionController::class, 'store'])
+        ->name('quiz.questions.store'); // ✅ BENAR
+
+    // Tambahan: Edit, Update, Destroy Questions agar lengkap
+    Route::get('quiz/{quiz_id}/questions/{question_id}/edit', [App\Http\Controllers\Guru\QuestionController::class, 'edit'])
+        ->name('quiz.questions.edit');
+
+    Route::put('quiz/{quiz_id}/questions/{question_id}', [App\Http\Controllers\Guru\QuestionController::class, 'update'])
+        ->name('quiz.questions.update');
+
+    Route::delete('quiz/{quiz_id}/questions/{question_id}', [App\Http\Controllers\Guru\QuestionController::class, 'destroy'])
+        ->name('quiz.questions.destroy');
 });
+
+
 // Auth routes
 // tampil data siswa
 
@@ -89,6 +123,14 @@ Route::get('/guru/siswa', [DashboardController::class, 'siswaIndex'])->name('gur
 // use App\Http\Controllers\Siswa\Controller as SiswaController;
 
 // Route::get('/siswa/ebook', [SiswaController::class, 'ebook'])->name('siswa.emodul');
+
+// =========================
+//      ROUTE GURU QUIZ
+// =========================
+
+
+    // Quiz
+   
 
 
 

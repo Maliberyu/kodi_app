@@ -36,7 +36,7 @@
                             <p class="text-gray-500 mt-2">Tambahkan modul pelajaran baru</p>
                         </a>
                      <!-- Kelola Koin -->
-                        <a href="#" 
+                       <a href="{{ route('guru.quiz.index') }}" 
                             class="group bg-white bg-opacity-90 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-amber-100 
                                 hover:shadow-2xl hover:shadow-amber-500/50 transition-all duration-500 transform 
                                 hover:-translate-y-2 hover:scale-105">
@@ -46,6 +46,7 @@
                             <h3 class="text-2xl font-bold text-gray-700">Tambah Soal Game</h3>
                             <p class="text-gray-500 mt-2">Kelola atau tambahkan soal untuk game edukasi.</p>
                         </a>
+
                         <!-- Data Siswa -->
                         <a href="{{ route('guru.siswa.index') }}" 
                             class="group bg-white bg-opacity-90 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-blue-100 
