@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="text-3xl font-bold bg-gradient-to-r from-blue-500 to-purple-600 text-transparent bg-clip-text">
-            🎮 Daftar Quiz
+            🎮 Daftar Quizeee
         </h2>
     </x-slot>
 

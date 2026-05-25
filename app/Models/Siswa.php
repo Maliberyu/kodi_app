@@ -17,4 +17,26 @@ class Siswa extends Model
 
     // Kolom yang bisa diisi massal
     protected $fillable = ['nama', 'kelas', 'email']; // sesuaikan dengan tabelmu
+
+    /**
+     * Siswa → orang tua
+     * Relasi many-to-many dengan User
+     */
+    public function orangTua()
+    {
+        return $this->belongsToMany(
+            User::class,
+            'orang_tua_siswa',
+            'siswa_id',     // foreign key di tabel pivot untuk model Siswa
+            'orang_tua_id'  // foreign key di tabel pivot untuk model User
+        );
+    }
+
+    /**
+     * Ambil semua jawaban kuis siswa
+     */
+    public function jawabanKuis()
+    {
+        return $this->hasMany(JawabanKuis::class, 'user_id');
+    }
 }

@@ -97,7 +97,7 @@
     </div>
 
     <p class="mt-mb-10 mt-12 text-gray-600 text-lg">
-        Gratis selamanya • Tanpa kartu kredit
+        Sedikit belajar hari ini, banyak manfaat di hari nanti.
     </p>
 </section>
 
@@ -137,7 +137,7 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-10 mb-20">
             
             <!-- Praktisi 1 -->
-            <div class="bg-white rounded-3xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 hover:-translate-y-3">
+            <!-- <div class="bg-white rounded-3xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 hover:-translate-y-3">
                 <div class="h-80 overflow-hidden">
                     <img src="https://yt3.googleusercontent.com/ytc/AIdro_mMYiqoBQ6lejSLo32Hd_Y7Sqke_7ZcYjb8MdOwBfn7UaQ=s160-c-k-c0x00ffffff-no-rj" 
                          alt="Bu Rina" 
@@ -147,13 +147,31 @@
                     <h4 class="text-2xl font-bold text-gray-800">Risda Ayulia Apandi, Spd.</h4>
                     <p class="text-cyan-600 font-medium mt-1">Guru Koding </p>
                 </div>
-            </div>
+            </div> -->
+            <a href="/kodi_app/public/profile/bu-Risda" class="block group">
+                <div class="bg-white rounded-3xl shadow-xl overflow-hidden 
+                            transition-all duration-300 group-hover:shadow-2xl group-hover:-translate-y-3">
+
+                    <div class="h-80 overflow-hidden">
+                       <img src="{{ asset('storage/poto.jpeg') }}" alt="My Photo"
+                            alt="Bu Risda" 
+                            class="w-full h-full object-cover group-hover:scale-110 transition-all duration-500">
+                    </div>
+
+                    <div class="p-6 text-center bg-gradient-to-t from-cyan-50 to-transparent">
+                        <h4 class="text-2xl font-bold text-gray-800">Risda Ayulia Apandi, Spd.</h4>
+                        <p class="text-cyan-600 font-medium mt-1">Guru Koding</p>
+                    </div>
+                </div>
+            </a>
+
 
             <!-- Praktisi 2 -->
+             
             <div class="bg-white rounded-3xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 hover:-translate-y-3">
                 <div class="h-80 overflow-hidden">
-                    <img src="https://scontent-cgk1-2.xx.fbcdn.net/v/t1.6435-1/99142016_2871274402994783_3312783901188947968_n.jpg?stp=dst-jpg_s320x320_tt6&_nc_cat=107&ccb=1-7&_nc_sid=fe59b0&_nc_eui2=AeGaLFa10okgCF4DjM2FOVDCT3aZ8j0Yhe9PdpnyPRiF70PgHOHscEw1igaaHtO4s9tU57xvpBzipZvThQ-hSmba&_nc_ohc=drst5uxEtgQQ7kNvwE4px4Z&_nc_oc=AdnkI5W4DdIttnaFoOPfEqM3t4vB-7sQb4CJGRckWORhIOtpuGOUnEnQ2SiFdvFrUdQ&_nc_zt=24&_nc_ht=scontent-cgk1-2.xx&_nc_gid=61pOBhnLhRtgzxXM5d__8g&oh=00_Afg1wk7az_oqFm0JmYvtQV-f-JJ2jBMWBscNNi4iQDb-vw&oe=6950911B" 
-                         alt="Mas Fikri" 
+                    <img src="https://avatars.githubusercontent.com/u/219940777?v=4" 
+                         alt="Maliberyu" 
                          class="w-full h-full object-cover">
                 </div>
                 <div class="p-6 text-center bg-gradient-to-t from-purple-50 to-transparent">
@@ -165,8 +183,8 @@
             <!-- Praktisi 3 -->
             <div class="bg-white rounded-3xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 hover:-translate-y-3">
                 <div class="h-80 overflow-hidden">
-                    <img src="https://media.licdn.com/dms/image/v2/D4D03AQEi-urhlgET9w/profile-displayphoto-shrink_200_200/profile-displayphoto-shrink_200_200/0/1698922272863?e=2147483647&v=beta&t=2cUkPsGqG_y0TVvhVCfQ6M-i1BH68m58Yuvr0167Ai4" 
-                         alt="Kak Aisyah" 
+                    <img src="https://media.licdn.com/dms/image/v2/D5603AQHebX5W-ckZoQ/profile-displayphoto-scale_200_200/B56ZwETLRtKsAY-/0/1769598662550?e=2147483647&v=beta&t=fJOX3_iINZkHdIk2ihjHMR75in6j-c9vmvaoqTwb3Mc" 
+                         alt="ALWI NURFAIZI" 
                          class="w-full h-full object-cover">
                 </div>
                 <div class="p-6 text-center bg-gradient-to-t from-amber-50 to-transparent">
@@ -201,33 +219,32 @@
     </section>
 
     <!-- Kontak -->
-    <section id="kontak" class="py-24 px-6 bg-gradient-to-r from-cyan-500 to-fuchsia-600 text-white">
-        <div class="max-w-5xl mx-auto text-center">
-            <h2 class="text-5xl md:text-6xl font-black mb-8">Punya Pertanyaan?</h2>
-            <p class="text-xl md:text-2xl mb-16 max-w-3xl mx-auto opacity-90">
-                Saran, kritik, atau mau kerja sama? Tim kodi.app selalu senang dengar kabar dari kamu!
-            </p>
+  <section id="kontak" class="py-24 px-6 bg-gradient-to-r from-cyan-500 to-fuchsia-600 text-white">
+    <div class="max-w-5xl mx-auto text-center">
+        <h2 class="text-5xl md:text-6xl font-black mb-8">Punya Pertanyaan?</h2>
+        <p class="text-xl md:text-2xl mb-16 max-w-3xl mx-auto opacity-90">
+            Saran, kritik, atau mau kerja sama? Tim kodi.app selalu senang dengar kabar dari kamu!
+        </p>
 
-            <div class="grid md:grid-cols-3 gap-8 mb-16">
-                <div class="bg-white/15 backdrop-blur-md rounded-2xl p-8 hover:bg-white/20 transition">
-                    <div class="text-5xl mb-4">Email</div>
-                    <p class="text-2xl font-bold">halo@kodi.app</p>
-                </div>
-                <div class="bg-white/15 backdrop-blur-md rounded-2xl p-8 hover:bg-white/20 transition">
-                    <div class="text-5xl mb-4">Halaman WhatsApp</div>
-                    <p class="text-2xl font-bold">Kodi.app</p>
-                </div>
-                <div class="bg-white/15 backdrop-blur-md rounded-2xl p-8 hover:bg-white/20 transition">
-                    <div class="text-5xl mb-4">Instagram</div>
-                    <p class="text-2xl font-bold">@kodi.app</p>
-                </div>
+        <div class="grid md:grid-cols-2 gap-6 mb-16 justify-center">
+            <div class="bg-white/15 backdrop-blur-md rounded-2xl p-5 hover:bg-white/20 transition">
+                <div class="text-3xl mb-3">Email</div>
+                <p class="text-xl font-bold">halo@kodi.app</p>
             </div>
 
-            <a href="mailto:halo@kodi.app" class="inline-block px-14 py-6 bg-white text-cyan-600 hover:bg-gray-100 text-2xl font-bold rounded-2xl shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
-                Kirim Pesan Sekarang
-            </a>
+            <div class="bg-white/15 backdrop-blur-md rounded-2xl p-5 hover:bg-white/20 transition">
+                <div class="text-3xl mb-3">Instagram</div>
+                <p class="text-xl font-bold">@kodi.app</p>
+            </div>
         </div>
-    </section>
+
+        <a href="https://whatsapp.com/channel/0029Vay0hFn2v1IrMtLECk0M" class="inline-block px-14 py-6 bg-white text-cyan-600 hover:bg-gray-100 text-2xl font-bold rounded-2xl shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
+            Halaman WhatsApp Kami
+        </a>
+    </div>
+</section>
+
+
 
     <!-- Footer -->
     <footer class="bg-gray-900 text-white py-12 px-6">

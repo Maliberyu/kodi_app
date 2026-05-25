@@ -6,32 +6,22 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('kuis', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('modul_id')->constrained('moduls')->onDelete('cascade');
-            // Artinya:
-            // - wajib diisi (tidak boleh null)
-            // - otomatis buat index
-            // - kalau modul dihapus, soal ikut kehapus (cascade)
+            $table->foreignId('modul_id')->constrained('e_modules')->onDelete('cascade');
             $table->text('pertanyaan');
             $table->string('pilihan_a');
             $table->string('pilihan_b');
             $table->string('pilihan_c');
             $table->string('pilihan_d');
-            $table->char('jawaban_benar', 1); // A/B/C/D
+            $table->char('jawaban_benar', 1);
             $table->integer('poin')->default(10);
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('kuis');

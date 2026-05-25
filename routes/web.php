@@ -4,134 +4,121 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Guru\EModuleController;
 use App\Http\Controllers\Guru\DashboardController;
+use App\Http\Controllers\Siswa\KuisController;
+use App\Http\Controllers\Siswa\QuizizzController;
+use App\Http\Controllers\Siswa\ProyekController as SiswaProyekController;
+use App\Http\Controllers\Siswa\PlaygroundController;
+use App\Http\Controllers\Guru\LatihanController;
+use App\Http\Controllers\Guru\ProyekController as GuruProyekController;
 
 // Halaman depan
 Route::get('/', function () {
     return view('welcome');
 });
 
-// DASHBOARD OTOMATIS REDIRECT SESUAI ROLE
+Route::get('/profile/bu-Risda', function () {
+    return view('profile.bu-Risda');
+});
+
+// Redirect otomatis berdasarkan role
 Route::get('/home', function () {
     if (!auth()->check()) {
         return redirect('/login');
     }
-
     return match (auth()->user()->role) {
         'admin' => redirect()->route('admin.home'),
-        'guru' => redirect()->route('guru.home'),
+        'ortu'  => redirect()->route('ortu.home'),
+        'guru'  => redirect()->route('guru.home'),
         'siswa' => redirect()->route('siswa.home'),
         default => redirect()->route('home'),
     };
 })->middleware('auth')->name('home');
 
-// ==================== ADMIN ROUTES ====================
-// HANYA 1 GRUP AJA! Pakai auth + cek manual di controller (paling aman & gak error)
-Route::prefix('admin')->name('admin.')->group(function () {
-    Route::middleware('auth')->group(function () {
-        Route::get('/home', [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('home');
-        // Route::get('/users', [App\Http\Controllers\Admin\UserController::class, 'index'])->name('users.index');
-        // Route::post('/users/{id}/give-coins', [App\Http\Controllers\Admin\UserController::class, 'giveCoins'])->name('users.giveCoins');
-        // Route::post('/users/{id}/reset-streak', [App\Http\Controllers\Admin\UserController::class, 'resetStreak'])->name('users.resetStreak');
-    });
+// ==================== ADMIN ====================
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->group(function () {
+    Route::get('/home', [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('home');
+
+    Route::get('/users', [App\Http\Controllers\Admin\UserController::class, 'index'])->name('users.index');
+    Route::post('/users/{id}/give-coins', [App\Http\Controllers\Admin\UserController::class, 'giveCoins'])->name('users.giveCoins');
+    Route::post('/users/{id}/reset-streak', [App\Http\Controllers\Admin\UserController::class, 'resetStreak'])->name('users.resetStreak');
 });
 
-// ==================== SISWA ROUTES ====================
-// Route::prefix('siswa')->name('siswa.')->group(function () {
-//     Route::middleware('auth')->group(function () {
-//         Route::get('/home', [App\Http\Controllers\Siswa\DashboardController::class, 'index'])->name('home');
-//         // Route::get('/game', fn() => view('siswa.game'))->name('game');
-//          Route::get('/e-modul', fn() => view('e-modul'))->name('modules');
-//     });
+// ==================== SISWA ====================
+Route::prefix('siswa')->name('siswa.')->middleware(['auth', 'role:siswa'])->group(function () {
 
-// });
-Route::prefix('siswa')->name('siswa.')->middleware('auth')->group(function () {
+    Route::get('/home', [App\Http\Controllers\Siswa\DashboardController::class, 'index'])->name('home');
+    Route::get('/e-modul', [App\Http\Controllers\Siswa\DashboardController::class, 'modules'])->name('modules');
+    Route::get('/ranking', [App\Http\Controllers\Siswa\DashboardController::class, 'ranking'])->name('ranking');
 
-    Route::get('/home', [App\Http\Controllers\Siswa\DashboardController::class, 'index'])
-        ->name('home');
+    // PENTING: rute statis harus di atas rute dinamis {emodul}
+    Route::get('/kuis', [KuisController::class, 'index'])->name('kuis.index');
+    Route::get('/kuis/hasil', [KuisController::class, 'hasil'])->name('kuis.hasil');
+    Route::post('/kuis/jawab', [KuisController::class, 'simpanJawaban'])->name('kuis.jawab');
+    Route::get('/kuis/{emodul}', [KuisController::class, 'kerjakan'])->name('kuis.kerjakan');
 
-    Route::get('/e-modul', [App\Http\Controllers\Siswa\DashboardController::class, 'modules'])
-        ->name('modules');
+    Route::get('/quizizz', [QuizizzController::class, 'index'])->name('quizizz.index');
+    Route::get('/quizizz/{id}', [QuizizzController::class, 'show'])->name('quizizz.show');
 
+    // Proyek Siswa
+    Route::get('/proyek', [SiswaProyekController::class, 'index'])->name('proyek.index');
+    Route::get('/proyek/buat', [SiswaProyekController::class, 'create'])->name('proyek.create');
+    Route::post('/proyek', [SiswaProyekController::class, 'store'])->name('proyek.store');
+    Route::get('/proyek/{id}', [SiswaProyekController::class, 'show'])->name('proyek.show');
+
+    // Coding Playground
+    Route::get('/playground', [PlaygroundController::class, 'index'])->name('playground.index');
+    Route::post('/playground/save', [PlaygroundController::class, 'save'])->name('playground.save');
+    Route::get('/playground/load/{id}', [PlaygroundController::class, 'load'])->name('playground.load');
+    Route::delete('/playground/delete/{id}', [PlaygroundController::class, 'destroy'])->name('playground.delete');
 });
 
+// ==================== GURU ====================
+Route::prefix('guru')->name('guru.')->middleware(['auth', 'role:guru'])->group(function () {
 
+    // Dashboard
+    Route::get('/home', [DashboardController::class, 'home'])->name('home');
+    Route::get('/siswa', [DashboardController::class, 'siswaIndex'])->name('siswa.index');
+    Route::get('/ranking', [DashboardController::class, 'ranking'])->name('ranking');
 
-// ==================== GURU ROUTES ====================
-Route::prefix('guru')->name('guru.')->group(function () {
-    Route::middleware('auth')->group(function () {
-        Route::get('/home', [App\Http\Controllers\Guru\DashboardController::class, 'index'])->name('home');
-        // Route::get('/game', fn() => view('siswa.game'))->name('game');
-        // Route::get('/ebook', fn() => view('siswa.ebook'))->name('ebook');
-    });
-});
-// Profile
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
-
-// e-Module routes for Guru
-Route::prefix('guru')->middleware('auth')->name('guru.')->group(function () {
-    // E-Modul
+    // E-Modul (CRUD lengkap)
     Route::get('/e-modul', [EModuleController::class, 'index'])->name('e-modul.index');
     Route::get('/e-modul/create', [EModuleController::class, 'create'])->name('e-modul.create');
     Route::post('/e-modul', [EModuleController::class, 'store'])->name('e-modul.store');
+    Route::get('/e-modul/{emodule}/edit', [EModuleController::class, 'edit'])->name('e-modul.edit');
+    Route::put('/e-modul/{emodule}', [EModuleController::class, 'update'])->name('e-modul.update');
     Route::delete('/e-modul/{id}', [EModuleController::class, 'destroy'])->name('e-modul.destroy');
 
-    // Quiz
-    Route::get('quiz', [App\Http\Controllers\Guru\QuizController::class, 'index'])->name('quiz.index');
-    Route::get('quiz/create', [App\Http\Controllers\Guru\QuizController::class, 'create'])->name('quiz.create');
-    Route::post('quiz/store', [App\Http\Controllers\Guru\QuizController::class, 'store'])->name('quiz.store');
+    // Kuis
+    Route::resource('kuis', App\Http\Controllers\Guru\KuisController::class);
+    Route::get('modul/{modul}/kuis', [App\Http\Controllers\Guru\KuisController::class, 'byModul'])->name('kuis.by-modul');
 
-    // Edit & Update Quiz
-    Route::get('quiz/{quiz}/edit', [App\Http\Controllers\Guru\QuizController::class, 'edit'])->name('quiz.edit');
-    Route::put('quiz/{quiz}', [App\Http\Controllers\Guru\QuizController::class, 'update'])->name('quiz.update');
+    // Latihan
+    Route::resource('latihan', App\Http\Controllers\Guru\LatihanController::class)
+         ->only(['index', 'store', 'show', 'destroy']);
 
-    // Hapus Quiz
-    Route::delete('quiz/{quiz}', [App\Http\Controllers\Guru\QuizController::class, 'destroy'])->name('quiz.destroy');
+    // Quizizz
+    Route::get('/quizizz', [\App\Http\Controllers\Guru\QuizizzController::class, 'index'])->name('quizizz.index');
+    Route::post('/quizizz', [\App\Http\Controllers\Guru\QuizizzController::class, 'store'])->name('quizizz.store');
+    Route::delete('/quizizz/{id}', [\App\Http\Controllers\Guru\QuizizzController::class, 'destroy'])->name('quizizz.destroy');
 
-    // Questions
-    Route::get('quiz/{quiz_id}/questions', [App\Http\Controllers\Guru\QuestionController::class, 'index'])
-        ->name('quiz.questions.index'); // ✅ BENAR
-
-    Route::get('quiz/{quiz_id}/questions/create', [App\Http\Controllers\Guru\QuestionController::class, 'create'])
-        ->name('quiz.questions.create'); // ⚠️ Sebelumnya salah nama, harus 'quiz.questions.create'
-
-    Route::post('quiz/{quiz_id}/questions/store', [App\Http\Controllers\Guru\QuestionController::class, 'store'])
-        ->name('quiz.questions.store'); // ✅ BENAR
-
-    // Tambahan: Edit, Update, Destroy Questions agar lengkap
-    Route::get('quiz/{quiz_id}/questions/{question_id}/edit', [App\Http\Controllers\Guru\QuestionController::class, 'edit'])
-        ->name('quiz.questions.edit');
-
-    Route::put('quiz/{quiz_id}/questions/{question_id}', [App\Http\Controllers\Guru\QuestionController::class, 'update'])
-        ->name('quiz.questions.update');
-
-    Route::delete('quiz/{quiz_id}/questions/{question_id}', [App\Http\Controllers\Guru\QuestionController::class, 'destroy'])
-        ->name('quiz.questions.destroy');
+    // Proyek Siswa
+    Route::get('/proyek', [GuruProyekController::class, 'index'])->name('proyek.index');
+    Route::get('/proyek/{id}', [GuruProyekController::class, 'show'])->name('proyek.show');
+    Route::post('/proyek/{id}/nilai', [GuruProyekController::class, 'nilai'])->name('proyek.nilai');
 });
 
+// ==================== ORTU ====================
+Route::prefix('ortu')->name('ortu.')->middleware(['auth', 'role:ortu'])->group(function () {
+    Route::get('/', [\App\Http\Controllers\Ortu\DashboardController::class, 'index'])->name('home');
+    Route::get('/anak/{id}', [\App\Http\Controllers\Ortu\DashboardController::class, 'detail'])->name('anak.detail');
+    Route::post('/notifications/read', [\App\Http\Controllers\Ortu\DashboardController::class, 'markAllRead'])->name('notifications.read');
+});
 
-// Auth routes
-// tampil data siswa
-
-
-Route::get('/guru/home', [DashboardController::class, 'home'])->name('guru.home');
-Route::get('/guru/siswa', [DashboardController::class, 'siswaIndex'])->name('guru.siswa.index');
-//list emodul siswa
-// use App\Http\Controllers\Siswa\Controller as SiswaController;
-
-// Route::get('/siswa/ebook', [SiswaController::class, 'ebook'])->name('siswa.emodul');
-
-// =========================
-//      ROUTE GURU QUIZ
-// =========================
-
-
-    // Quiz
-   
-
-
+// ==================== PROFILE ====================
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::post('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
 
 require __DIR__.'/auth.php';

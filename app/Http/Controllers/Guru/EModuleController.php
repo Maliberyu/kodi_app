@@ -3,54 +3,85 @@
 namespace App\Http\Controllers\Guru;
 
 use App\Http\Controllers\Controller;
-use App\Models\EModule;
+use App\Models\Emodule;
 use Illuminate\Http\Request;
 
 class EModuleController extends Controller
 {
-    // Daftar klasifikasi yang dipakai di form
-    private $klasifikasiOptions = [
+    private array $klasifikasiOptions = [
         'Berpikir Kritis',
         'Algoritma',
-        'Komputasional'
+        'Komputasional',
     ];
 
-    // Tampilkan form tambah
+    public function index(\Illuminate\Http\Request $request)
+    {
+        $query = Emodule::query();
+
+        if ($klasifikasi = $request->input('klasifikasi')) {
+            $query->where('klasifikasi', $klasifikasi);
+        }
+        if ($search = $request->input('search')) {
+            $query->where('judul', 'like', "%{$search}%");
+        }
+
+        $modules          = $query->latest()->get();
+        $klasifikasiList  = $this->klasifikasiOptions;
+
+        return view('guru.e-modul.index', compact('modules', 'klasifikasiList'));
+    }
+
     public function create()
     {
-        return view('guru.e-modul.create', [
-            'klasifikasiOptions' => $this->klasifikasiOptions
-        ]);
+        $klasifikasiOptions = $this->klasifikasiOptions;
+        return view('guru.e-modul.create', compact('klasifikasiOptions'));
     }
 
-    // Tampilkan daftar modul (buat nanti)
-    public function index()
-    {
-        $modules = EModule::latest()->get();
-        return view('guru.e-modul.index', compact('modules'));
-    }
-
-    // Simpan data dari form
     public function store(Request $request)
     {
         $validated = $request->validate([
             'judul'       => 'required|string|max:255',
             'klasifikasi' => 'required|in:' . implode(',', $this->klasifikasiOptions),
             'keterangan'  => 'required|string',
-            'pdf_link'    => 'nullable|url|starts_with:https://,http://',
+            'pdf_link'    => 'nullable|url',
+            'video_url'   => 'nullable|url',
         ]);
 
-        EModule::create($validated);
+        $validated['user_id'] = auth()->id();
+
+        Emodule::create($validated);
 
         return redirect()
             ->route('guru.e-modul.index')
             ->with('success', 'E-Module berhasil ditambahkan!');
     }
 
-    // Hapus modul
+    public function edit(Emodule $emodule)
+    {
+        $klasifikasiOptions = $this->klasifikasiOptions;
+        return view('guru.e-modul.edit', compact('emodule', 'klasifikasiOptions'));
+    }
+
+    public function update(Request $request, Emodule $emodule)
+    {
+        $validated = $request->validate([
+            'judul'       => 'required|string|max:255',
+            'klasifikasi' => 'required|in:' . implode(',', $this->klasifikasiOptions),
+            'keterangan'  => 'required|string',
+            'pdf_link'    => 'nullable|url',
+            'video_url'   => 'nullable|url',
+        ]);
+
+        $emodule->update($validated);
+
+        return redirect()
+            ->route('guru.e-modul.index')
+            ->with('success', 'E-Module berhasil diperbarui!');
+    }
+
     public function destroy($id)
     {
-        EModule::findOrFail($id)->delete();
+        Emodule::findOrFail($id)->delete();
         return back()->with('success', 'Modul berhasil dihapus');
     }
 }

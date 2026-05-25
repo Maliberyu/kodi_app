@@ -1,185 +1,90 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight flex items-center">
-            <span class="mr-2">🎉</span> Guru KODI 🚀
-        </h2>
+        <h2 class="text-xl font-semibold text-slate-800">Dashboard Guru</h2>
+        <p class="text-sm text-slate-500 mt-0.5">Selamat datang, {{ auth()->user()->name }}</p>
     </x-slot>
 
-    <div class="py-12 relative">
-        <!-- Background Pattern for Extra Visual Appeal -->
-        <div class="absolute inset-0 bg-gradient-to-br from-indigo-100 via-purple-50 to-pink-50 opacity-30">
-            <div class="absolute inset-0" style="background-image: radial-gradient(circle, rgba(99,102,241,0.1) 1px, transparent 1px); background-size: 20px 20px;"></div>
-        </div>
+    <div class="py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 relative z-10">
-            <div class="bg-gradient-to-br from-indigo-50 to-purple-50 overflow-hidden rounded-3xl shadow-2xl border border-purple-100 backdrop-blur-sm">
+            <!-- Menu Utama -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
 
-                <div class="p-10">
-
-                    <h1 class="text-5xl font-extrabold text-center bg-clip-text text-transparent bg-gradient-to-r from-purple-600 via-pink-500 to-rose-600 mb-12 animate-fade-in">
-                        Selamat Datang ! ✨
-                    </h1>
-
-                    <!-- Stats Cards -->
-                    <!-- Menu Kotak -->
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-16 animate-fade-in-delay-5">
-
-                        <!-- Input E-Module -->
-                        <a href="{{ route('guru.e-modul.index') }}" 
-                            class="group bg-white bg-opacity-90 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-indigo-100 
-                                hover:shadow-2xl hover:shadow-indigo-500/50 transition-all duration-500 transform 
-                                hover:-translate-y-2 hover:scale-105">
-                            <div class="text-4xl mb-4 text-indigo-600 group-hover:rotate-6 transition-transform duration-300">
-                                📚
-                            </div>
-                            <h3 class="text-2xl font-bold text-gray-700">Daftar E-Module</h3>
-                            <p class="text-gray-500 mt-2">Tambahkan modul pelajaran baru</p>
-                        </a>
-                     <!-- Kelola Koin -->
-                       <a href="{{ route('guru.quiz.index') }}" 
-                            class="group bg-white bg-opacity-90 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-amber-100 
-                                hover:shadow-2xl hover:shadow-amber-500/50 transition-all duration-500 transform 
-                                hover:-translate-y-2 hover:scale-105">
-                            <div class="text-4xl mb-4 text-amber-600 group-hover:rotate-6 transition-transform duration-300">
-                                🎮
-                            </div>
-                            <h3 class="text-2xl font-bold text-gray-700">Tambah Soal Game</h3>
-                            <p class="text-gray-500 mt-2">Kelola atau tambahkan soal untuk game edukasi.</p>
-                        </a>
-
-                        <!-- Data Siswa -->
-                        <a href="{{ route('guru.siswa.index') }}" 
-                            class="group bg-white bg-opacity-90 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-blue-100 
-                                hover:shadow-2xl hover:shadow-blue-500/50 transition-all duration-500 transform 
-                                hover:-translate-y-2 hover:scale-105">
-                            <div class="text-4xl mb-4 text-blue-600 group-hover:rotate-6 transition-transform duration-300">
-                                🧑‍🎓
-                            </div>
-                            <h3 class="text-2xl font-bold text-gray-700">Data Siswa</h3>
-                            <p class="text-gray-500 mt-2">Kelola informasi siswa</p>
-                        </a>
-
-                        <!-- Data Rangking -->
-                         <a href="#" 
-                            class="group bg-white bg-opacity-90 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-blue-100 
-                                hover:shadow-2xl hover:shadow-blue-500/50 transition-all duration-500 transform 
-                                hover:-translate-y-2 hover:scale-105">
-                            <div class="text-4xl mb-4 text-blue-600 group-hover:rotate-6 transition-transform duration-300">
-                                🏆
-                            </div>
-                            <h3 class="text-2xl font-bold text-gray-700">Rangking </h3>
-                            <p class="text-gray-500 mt-2">Lihat potensi kecerdasan siswa</p>
-                         </a>
-                        <!-- <a href="#" 
-                            class="group bg-white bg-opacity-90 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-green-100 
-                                hover:shadow-2xl hover:shadow-green-500/50 transition-all duration-500 transform 
-                                hover:-translate-y-2 hover:scale-105">
-                            <div class="text-4xl mb-4 text-green-600 group-hover:rotate-6 transition-transform duration-300">
-                                🏆
-                            </div>
-                            <h3 class="text-2xl font-bold text-gray-700">Rangking </h3>
-                            <p class="text-gray-500 mt-2">Lihat potensi kecerdasan siswa</p>
-                        </a> --> 
-
-                       
-                  <!-- <a href="#" 
-                        class="group bg-white bg-opacity-90 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-rose-100 
-                        hover:shadow-2xl hover:shadow-rose-500/50 transition-all duration-500 transform 
-                        hover:-translate-y-2 hover:scale-105">
-                        
-                        <div class="text-4xl mb-4 text-rose-600 group-hover:rotate-6 transition-transform duration-300">
-                            🎮
-                        </div>
-
-                        <h3 class="text-2xl font-bold text-gray-700">Tambah Soal Game</h3>
-                        
-                        <p class="text-gray-500 mt-2">Kelola atau tambahkan soal untuk game edukasi.</p>
-                    </a> -->
-
-
-                        <!-- Riwayat -->
-                        <!-- <a href="#" 
-                            class="group bg-white bg-opacity-90 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-purple-100 
-                                hover:shadow-2xl hover:shadow-purple-500/50 transition-all duration-500 transform 
-                                hover:-translate-y-2 hover:scale-105">
-                            <div class="text-4xl mb-4 text-purple-600 group-hover:rotate-6 transition-transform duration-300">
-                                📜
-                            </div>
-                            <h3 class="text-2xl font-bold text-gray-700">Riwayat</h3>
-                            <p class="text-gray-500 mt-2">Lihat aktivitas lengkap</p>
-                        </a> -->
-
-                    <!-- Tambah Menu Lain -->
-               
-
-                    <!-- New Section: Recent Activities -->
-                    <div class="bg-white bg-opacity-80 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-gray-100 mb-12 animate-fade-in-delay-5">
-                        <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">📋 Aktivitas Terbaru</h2>
-                        <ul class="space-y-4">
-                            <li class="flex items-center p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl shadow-sm">
-                                <span class="text-2xl mr-4">👤</span>
-                                <div>
-                                    <p class="font-semibold text-gray-700">Siswa baru bergabung: Ahmad</p>
-                                    <p class="text-sm text-gray-500">2 jam yang lalu</p>
-                                </div>
-                            </li>
-                            <li class="flex items-center p-4 bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl shadow-sm">
-                                <span class="text-2xl mr-4">🎓</span>
-                                <div>
-                                    <p class="font-semibold text-gray-700">Guru menambahkan materi baru</p>
-                                    <p class="text-sm text-gray-500">5 jam yang lalu</p>
-                                </div>
-                            </li>
-                            <li class="flex items-center p-4 bg-gradient-to-r from-amber-50 to-yellow-50 rounded-xl shadow-sm">
-                                <span class="text-2xl mr-4">💰</span>
-                                <div>
-                                    <p class="font-semibold text-gray-700">Koin didistribusikan ke 10 siswa</p>
-                                    <p class="text-sm text-gray-500">1 hari yang lalu</p>
-                                </div>
-                            </li>
-                        </ul>
+                <a href="{{ route('guru.e-modul.index') }}"
+                   class="group bg-white rounded-xl border border-slate-200 p-6 hover:shadow-md hover:border-indigo-300 transition-all duration-200">
+                    <div class="w-10 h-10 bg-indigo-50 rounded-lg flex items-center justify-center mb-4 group-hover:bg-indigo-100 transition-colors">
+                        <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                        </svg>
                     </div>
+                    <h3 class="font-semibold text-slate-800">E-Modul</h3>
+                    <p class="text-sm text-slate-500 mt-1">Kelola materi pelajaran</p>
+                </a>
 
-                    <!-- Action Button -->
-                    <!-- <div class="text-center">
-                        <a href="#" onclick="alert('Fitur Kelola User coming soon bro!')"
-                            class="inline-block bg-gradient-to-r from-purple-600 via-pink-500 to-rose-600 text-white font-extrabold text-2xl py-5 px-12 rounded-full shadow-2xl hover:shadow-lg hover:shadow-purple-500/40 transform hover:scale-105 transition-all duration-300 animate-pulse-slow cursor-pointer relative overflow-hidden">
-                            <span class="relative z-10">🛠️ Kelola User (Coming Soon)</span>
-                            <div class="absolute inset-0 bg-white opacity-0 hover:opacity-20 transition-opacity duration-300 rounded-full"></div>
-                        </a>
-                    </div> -->
+                <a href="{{ route('guru.kuis.index') }}"
+                   class="group bg-white rounded-xl border border-slate-200 p-6 hover:shadow-md hover:border-indigo-300 transition-all duration-200">
+                    <div class="w-10 h-10 bg-indigo-50 rounded-lg flex items-center justify-center mb-4 group-hover:bg-indigo-100 transition-colors">
+                        <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
+                        </svg>
+                    </div>
+                    <h3 class="font-semibold text-slate-800">Kuis & Latihan</h3>
+                    <p class="text-sm text-slate-500 mt-1">Tambah dan kelola soal</p>
+                </a>
 
+                <a href="{{ route('guru.siswa.index') }}"
+                   class="group bg-white rounded-xl border border-slate-200 p-6 hover:shadow-md hover:border-indigo-300 transition-all duration-200">
+                    <div class="w-10 h-10 bg-indigo-50 rounded-lg flex items-center justify-center mb-4 group-hover:bg-indigo-100 transition-colors">
+                        <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+                        </svg>
+                    </div>
+                    <h3 class="font-semibold text-slate-800">Data Siswa</h3>
+                    <p class="text-sm text-slate-500 mt-1">Lihat informasi siswa</p>
+                </a>
+
+                <a href="{{ route('guru.ranking') }}"
+                   class="group bg-white rounded-xl border border-slate-200 p-6 hover:shadow-md hover:border-indigo-300 transition-all duration-200">
+                    <div class="w-10 h-10 bg-indigo-50 rounded-lg flex items-center justify-center mb-4 group-hover:bg-indigo-100 transition-colors">
+                        <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                        </svg>
+                    </div>
+                    <h3 class="font-semibold text-slate-800">Ranking</h3>
+                    <p class="text-sm text-slate-500 mt-1">Lihat peringkat siswa</p>
+                </a>
+
+            </div>
+
+            <!-- Aktivitas Terbaru -->
+            <div class="bg-white rounded-xl border border-slate-200 p-6">
+                <h3 class="font-semibold text-slate-800 mb-4">Aktivitas Terbaru</h3>
+                <div class="space-y-3">
+                    <div class="flex items-start gap-3 py-3 border-b border-slate-100 last:border-0">
+                        <div class="w-8 h-8 bg-indigo-50 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-slate-700">Materi baru tersedia untuk siswa</p>
+                            <p class="text-xs text-slate-400 mt-0.5">5 jam yang lalu</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3 py-3 border-b border-slate-100 last:border-0">
+                        <div class="w-8 h-8 bg-emerald-50 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-slate-700">Soal kuis berhasil ditambahkan</p>
+                            <p class="text-xs text-slate-400 mt-0.5">1 hari yang lalu</p>
+                        </div>
+                    </div>
                 </div>
             </div>
+
         </div>
     </div>
-
-    <style>
-        @keyframes pulse-slow {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.9; }
-        }
-        .animate-pulse-slow {
-            animation: pulse-slow 2s infinite;
-        }
-        @keyframes fade-in {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fade-in {
-            animation: fade-in 1s ease-out;
-        }
-        .animate-fade-in-delay-1 { animation: fade-in 1s ease-out 0.2s both; }
-        .animate-fade-in-delay-2 { animation: fade-in 1s ease-out 0.4s both; }
-        .animate-fade-in-delay-3 { animation: fade-in 1s ease-out 0.6s both; }
-        .animate-fade-in-delay-4 { animation: fade-in 1s ease-out 0.8s both; }
-        .animate-fade-in-delay-5 { animation: fade-in 1s ease-out 1s both; }
-        @keyframes bounce-slow {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-5px); }
-        }
-        .animate-bounce-slow {
-            animation: bounce-slow 3s infinite;
-        }
-    </style>
 </x-app-layout>
