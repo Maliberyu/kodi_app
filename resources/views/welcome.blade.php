@@ -97,7 +97,7 @@
     </div>
 
     <p class="mt-mb-10 mt-12 text-gray-600 text-lg">
-        Sedikit belajar hari ini, banyak manfaat di hari nanti.
+        Sedikit belajar hari ini, banyak manfaat di kemudian hari.
     </p>
 </section>
 
@@ -122,82 +122,188 @@
                     </p>
                 </div>
             </div>
-       <!-- Judul Tim Praktisi -->
-                <div class="text-center mb-12">
-                    <!-- Jarak ke foto -->
-                    <h3 class="text-4xl md:text-5xl font-black gradient-text mb-4">
-                        Tim Praktisi Kami
-                    </h3>
-                    <p class="text-xl text-gray-600 max-w-2xl mx-auto">
-                        Belajar bersama guru-guru keren yang bikin pelajaran jadi petualangan seru!
-                    </p>
-                </div>
+        <!-- Judul Tim Praktisi -->
+        <div class="text-center mb-14">
+            <p class="text-sm font-bold tracking-widest text-cyan-500 uppercase mb-3">The Future Leader</p>
+            <h3 class="text-4xl md:text-5xl font-black gradient-text mb-4">
+                Tim Praktisi Kami
+            </h3>
+            <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+                Belajar bersama para praktisi keren yang mendedikasikan ilmunya untuk generasi digital!
+            </p>
+        </div>
 
-        <!-- 3 Foto Praktisi / Guru / Tim (Sejajar dalam Kotak) -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-10 mb-20">
-            
-            <!-- Praktisi 1 -->
-            <!-- <div class="bg-white rounded-3xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 hover:-translate-y-3">
-                <div class="h-80 overflow-hidden">
-                    <img src="https://yt3.googleusercontent.com/ytc/AIdro_mMYiqoBQ6lejSLo32Hd_Y7Sqke_7ZcYjb8MdOwBfn7UaQ=s160-c-k-c0x00ffffff-no-rj" 
-                         alt="Bu Rina" 
-                         class="w-full h-full object-cover">
-                </div>
-                <div class="p-6 text-center bg-gradient-to-t from-cyan-50 to-transparent">
-                    <h4 class="text-2xl font-bold text-gray-800">Risda Ayulia Apandi, Spd.</h4>
-                    <p class="text-cyan-600 font-medium mt-1">Guru Koding </p>
-                </div>
-            </div> -->
-            <a href="/kodi_app/public/profile/bu-Risda" class="block group">
-                <div class="bg-white rounded-3xl shadow-xl overflow-hidden 
-                            transition-all duration-300 group-hover:shadow-2xl group-hover:-translate-y-3">
+        <!-- Baris 1: Bu Risda (featured, centered, lebih besar) -->
+        <div class="flex justify-center mb-20">
+            <a href="/kodi_app/public/profile/bu-Risda" class="block group w-full max-w-sm">
+                <div class="bg-white rounded-3xl shadow-2xl overflow-hidden transition-all duration-300 group-hover:shadow-cyan-200 group-hover:-translate-y-4"
+                     style="box-shadow:0 25px 60px -12px rgba(6,182,212,.25)">
 
-                    <div class="h-80 overflow-hidden">
-                       <img src="{{ asset('storage/poto.jpeg') }}" alt="My Photo"
-                            alt="Bu Risda" 
-                            class="w-full h-full object-cover group-hover:scale-110 transition-all duration-500">
+                    <!-- Crown badge -->
+                    <div class="relative">
+                        <div class="h-96 overflow-hidden">
+                            <img src="{{ asset('storage/poto.jpeg') }}"
+                                 alt="Bu Risda"
+                                 class="w-full h-full object-cover group-hover:scale-105 transition-all duration-500">
+                        </div>
+                        <!-- Leader badge -->
+                        <div class="absolute top-4 left-1/2 -translate-x-1/2">
+                            <span class="px-4 py-1.5 text-xs font-black rounded-full text-white tracking-widest"
+                                  style="background:linear-gradient(135deg,#06b6d4,#a855f7);box-shadow:0 4px 15px -3px rgba(6,182,212,.5)">
+                                ★ THE LEADER
+                            </span>
+                        </div>
                     </div>
 
-                    <div class="p-6 text-center bg-gradient-to-t from-cyan-50 to-transparent">
-                        <h4 class="text-2xl font-bold text-gray-800">Risda Ayulia Apandi, Spd.</h4>
-                        <p class="text-cyan-600 font-medium mt-1">Guru Koding</p>
+                    <div class="p-7 text-center" style="background:linear-gradient(180deg,#ecfeff,white)">
+                        <h4 class="text-2xl font-black text-gray-800">Risda Ayulia Apandi, S.Pd.</h4>
+                        <p class="font-bold mt-1" style="color:#06b6d4">Guru Koding</p>
+                        <p class="text-sm text-gray-500 mt-1">Pendidik & Inisiator kodi.app</p>
+                        <span class="inline-block mt-4 px-5 py-2 text-sm font-bold rounded-full text-white transition"
+                              style="background:linear-gradient(135deg,#06b6d4,#a855f7)">
+                            Lihat Portofolio →
+                        </span>
                     </div>
                 </div>
             </a>
+        </div>
 
+        <!-- Pemisah & label Tim Pengembang -->
+        <div class="flex items-center gap-4 max-w-2xl mx-auto mb-10 px-4">
+            <div class="flex-1 h-px" style="background:linear-gradient(90deg,transparent,#e2e8f0)"></div>
+            <p class="text-xs font-bold tracking-widest uppercase text-gray-400 whitespace-nowrap">Tim Pengembang</p>
+            <!-- <p class="text-xs font-bold tracking-widest uppercase text-gray-400 whitespace-nowrap">---------------</p> -->
+            <div class="flex-1 h-px" style="background:linear-gradient(90deg,#e2e8f0,transparent)"></div>
+        </div>
 
-            <!-- Praktisi 2 -->
-             
+        <!-- Baris 2: Aris & Alwi (tim, lebih kecil, 2 kolom) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-8 max-w-2xl mx-auto mb-20 px-4 md:px-0">
+
+            <!-- Aris -->
             <div class="bg-white rounded-3xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 hover:-translate-y-3">
-                <div class="h-80 overflow-hidden">
-                    <img src="https://avatars.githubusercontent.com/u/219940777?v=4" 
-                         alt="Maliberyu" 
+                <div class="h-64 overflow-hidden">
+                    <img src="https://avatars.githubusercontent.com/u/219940777?v=4"
+                         alt="Aris Sunandar"
                          class="w-full h-full object-cover">
                 </div>
-                <div class="p-6 text-center bg-gradient-to-t from-purple-50 to-transparent">
-                    <h4 class="text-2xl font-bold text-gray-800">Aris Sunandar, Amd.Kom.</h4>
-                    <p class="text-purple-600 font-medium mt-1">Frontend Developer</p>
+                <div class="p-5 text-center" style="background:linear-gradient(180deg,#faf5ff,white)">
+                    <h4 class="text-lg font-bold text-gray-800">Aris Sunandar, Amd.Kom.</h4>
+                    <p class="font-semibold mt-1 text-sm" style="color:#9333ea">Frontend Developer</p>
                 </div>
             </div>
 
-            <!-- Praktisi 3 -->
+            <!-- Alwi -->
             <div class="bg-white rounded-3xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 hover:-translate-y-3">
-                <div class="h-80 overflow-hidden">
-                    <img src="https://media.licdn.com/dms/image/v2/D5603AQHebX5W-ckZoQ/profile-displayphoto-scale_200_200/B56ZwETLRtKsAY-/0/1769598662550?e=2147483647&v=beta&t=fJOX3_iINZkHdIk2ihjHMR75in6j-c9vmvaoqTwb3Mc" 
-                         alt="ALWI NURFAIZI" 
+                <div class="h-64 overflow-hidden">
+                    <img src="https://media.licdn.com/dms/image/v2/D5603AQHebX5W-ckZoQ/profile-displayphoto-scale_200_200/B56ZwETLRtKsAY-/0/1769598662550?e=2147483647&v=beta&t=fJOX3_iINZkHdIk2ihjHMR75in6j-c9vmvaoqTwb3Mc"
+                         alt="Alwi Nurfaizi"
                          class="w-full h-full object-cover">
                 </div>
-                <div class="p-6 text-center bg-gradient-to-t from-amber-50 to-transparent">
-                    <h4 class="text-2xl font-bold text-gray-800">Alwi Nurfaizi, S.Kom.</h4>
-                    <p class="text-amber-600 font-medium mt-1">Backend Developer </p>
+                <div class="p-5 text-center" style="background:linear-gradient(180deg,#fffbeb,white)">
+                    <h4 class="text-lg font-bold text-gray-800">Alwi Nurfaizi, S.Kom.</h4>
+                    <p class="font-semibold mt-1 text-sm" style="color:#d97706">Backend Developer</p>
                 </div>
             </div>
 
         </div>
 
-   
+            {{-- ===== PORTAL MASUK ===== --}}
+            <div style="margin-top:5rem;margin-bottom:4rem">
+                <div class="text-center mb-12">
+                    <h3 class="text-4xl md:text-5xl font-black gradient-text mb-4">
+                        Masuk ke Portal
+                    </h3>
+                    <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+                        Pilih portal sesuai peranmu dan mulai petualangan belajar!
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+
+                    {{-- Portal Guru --}}
+                    <div class="rounded-3xl overflow-hidden shadow-xl" style="box-shadow:0 20px 50px -12px rgba(99,102,241,.25)">
+                        <div class="p-8 text-white text-center"
+                             style="background:linear-gradient(135deg,#6366f1,#7c3aed,#9333ea)">
+                            <div class="text-6xl mb-3">🎓</div>
+                            <h4 class="text-2xl font-black">Portal Guru</h4>
+                            <p class="text-sm mt-2" style="color:rgba(224,231,255,1)">
+                                Kelola kelas & pantau perkembangan siswa
+                            </p>
+                        </div>
+                        <div class="p-6 bg-white">
+                            <ul class="space-y-3 mb-6">
+                                @foreach([['📚','Buat & kelola E-Modul'],['🎯','Buat soal kuis interaktif'],['🛠️','Nilai proyek siswa'],['🏆','Pantau ranking & progress']] as [$ico,$txt])
+                                <li class="flex items-center gap-3 text-gray-700 text-sm font-medium">
+                                    <span class="w-8 h-8 rounded-xl flex items-center justify-center text-sm flex-shrink-0"
+                                          style="background:linear-gradient(135deg,#6366f1,#7c3aed)">{{ $ico }}</span>
+                                    {{ $txt }}
+                                </li>
+                                @endforeach
+                            </ul>
+                            <div class="flex gap-3">
+                                <a href="{{ route('demo.guru') }}"
+                                   class="flex-1 py-3 text-center text-sm font-bold rounded-2xl transition"
+                                   style="background:#eef2ff;color:#6366f1">
+                                        Lihat Demo
+                                </a>
+                                @if(auth()->check() && auth()->user()->isGuru())
+                                    <a href="{{ route('guru.home') }}"
+                                       class="flex-1 py-3 text-center text-white text-sm font-bold rounded-2xl"
+                                       style="background:linear-gradient(135deg,#6366f1,#7c3aed)">🚀 Dashboard</a>
+                                @else
+                                    <a href="{{ route('login') }}"
+                                       class="flex-1 py-3 text-center text-white text-sm font-bold rounded-2xl"
+                                       style="background:linear-gradient(135deg,#6366f1,#7c3aed)"> Login</a>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Portal Murid --}}
+                    <div class="rounded-3xl overflow-hidden shadow-xl" style="box-shadow:0 20px 50px -12px rgba(249,115,22,.25)">
+                        <div class="p-8 text-white text-center"
+                             style="background:linear-gradient(135deg,#f97316,#ec4899,#a855f7)">
+                            <div class="text-6xl mb-3">🧑‍💻</div>
+                            <h4 class="text-2xl font-black">Portal Murid</h4>
+                            <p class="text-sm mt-2" style="color:rgba(255,237,213,1)">
+                                Belajar seru, kumpulkan poin & raih juara!
+                            </p>
+                        </div>
+                        <div class="p-6 bg-white">
+                            <ul class="space-y-3 mb-6">
+                                @foreach([['📖','Pelajari E-Modul seru'],['🎮','Kerjakan kuis & tantangan'],['⚡','Coding di Block Playground'],['🏆','Bersaing di papan ranking']] as [$ico,$txt])
+                                <li class="flex items-center gap-3 text-gray-700 text-sm font-medium">
+                                    <span class="w-8 h-8 rounded-xl flex items-center justify-center text-sm flex-shrink-0"
+                                          style="background:linear-gradient(135deg,#f97316,#ec4899)">{{ $ico }}</span>
+                                    {{ $txt }}
+                                </li>
+                                @endforeach
+                            </ul>
+                            <div class="flex gap-3">
+                                <a href="{{ route('demo.siswa') }}"
+                                   class="flex-1 py-3 text-center text-sm font-bold rounded-2xl transition"
+                                   style="background:#fff7ed;color:#f97316">
+                                     Lihat Demo
+                                </a>
+                                @if(auth()->check() && auth()->user()->isSiswa())
+                                    <a href="{{ route('siswa.home') }}"
+                                       class="flex-1 py-3 text-center text-white text-sm font-bold rounded-2xl"
+                                       style="background:linear-gradient(135deg,#f97316,#ec4899)">🚀 Dashboard</a>
+                                @else
+                                    <a href="{{ route('login') }}"
+                                       class="flex-1 py-3 text-center text-white text-sm font-bold rounded-2xl"
+                                       style="background:linear-gradient(135deg,#f97316,#ec4899)"> Login</a>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            {{-- ===== END PORTAL ===== --}}
+
             <!-- Stats -->
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-10 text-center">
+            <!-- <div class="grid grid-cols-2 md:grid-cols-4 gap-10 text-center">
                 <div class="bg-gradient-to-br from-cyan-50 to-cyan-100 rounded-2xl p-8 shadow-md">
                     <div class="text-5xl font-black text-cyan-600">10K+</div>
                     <p class="text-gray-700 font-medium mt-3">Pengguna Aktif</p>
@@ -214,43 +320,176 @@
                     <div class="text-5xl font-black text-purple-600">24/7</div>
                     <p class="text-gray-700 font-medium mt-3">Belajar Kapan Saja</p>
                 </div>
-            </div>
+            </div> -->
         </div>
     </section>
 
-    <!-- Kontak -->
-  <section id="kontak" class="py-24 px-6 bg-gradient-to-r from-cyan-500 to-fuchsia-600 text-white">
-    <div class="max-w-5xl mx-auto text-center">
-        <h2 class="text-5xl md:text-6xl font-black mb-8">Punya Pertanyaan?</h2>
-        <p class="text-xl md:text-2xl mb-16 max-w-3xl mx-auto opacity-90">
-            Saran, kritik, atau mau kerja sama? Tim kodi.app selalu senang dengar kabar dari kamu!
-        </p>
+    <!-- ===== KONTAK ===== -->
+    <section id="kontak" style="background:#0f172a;padding:96px 24px">
+        <div style="max-width:1100px;margin:0 auto">
 
-        <div class="grid md:grid-cols-2 gap-6 mb-16 justify-center">
-            <div class="bg-white/15 backdrop-blur-md rounded-2xl p-5 hover:bg-white/20 transition">
-                <div class="text-3xl mb-3">Email</div>
-                <p class="text-xl font-bold">halo@kodi.app</p>
+            {{-- Header --}}
+            <div style="text-align:center;margin-bottom:64px">
+                <p style="font-size:12px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#06b6d4;margin-bottom:12px">
+                    Hubungi Kami
+                </p>
+                <h2 style="font-size:clamp(2rem,5vw,3.5rem);font-weight:900;color:white;margin-bottom:16px;line-height:1.15">
+                    Punya Pertanyaan?
+                </h2>
+                <p style="font-size:18px;color:#94a3b8;max-width:560px;margin:0 auto;line-height:1.7">
+                    Saran, kritik, atau ingin berkolaborasi? Tim kodi.app selalu terbuka dan siap merespons dengan sepenuh hati.
+                </p>
             </div>
 
-            <div class="bg-white/15 backdrop-blur-md rounded-2xl p-5 hover:bg-white/20 transition">
-                <div class="text-3xl mb-3">Instagram</div>
-                <p class="text-xl font-bold">@kodi.app</p>
+            {{-- 3 Kontak Cards --}}
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;margin-bottom:56px">
+
+                {{-- Email --}}
+                <div style="background:#1e293b;border:1px solid #334155;border-radius:20px;padding:28px 24px;display:flex;align-items:flex-start;gap:18px;transition:border-color .2s"
+                     onmouseenter="this.style.borderColor='#06b6d4'" onmouseleave="this.style.borderColor='#334155'">
+                    <div style="width:48px;height:48px;border-radius:14px;background:rgba(6,182,212,.12);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+                        <svg width="22" height="22" fill="none" stroke="#06b6d4" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <p style="font-size:12px;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px">Email</p>
+                        <p style="font-size:16px;font-weight:700;color:white">maliberyu@gmail.com</p>
+                        <p style="font-size:13px;color:#64748b;margin-top:4px">Respons dalam 1×24 jam</p>
+                    </div>
+                </div>
+
+                {{-- Instagram --}}
+                <div style="background:#1e293b;border:1px solid #334155;border-radius:20px;padding:28px 24px;display:flex;align-items:flex-start;gap:18px"
+                     onmouseenter="this.style.borderColor='#e879f9'" onmouseleave="this.style.borderColor='#334155'">
+                    <div style="width:48px;height:48px;border-radius:14px;background:rgba(232,121,249,.12);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+                        <svg width="22" height="22" fill="none" stroke="#e879f9" stroke-width="2" viewBox="0 0 24 24">
+                            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                            <circle cx="12" cy="12" r="4"/>
+                            <circle cx="17.5" cy="6.5" r="1" fill="#e879f9" stroke="none"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <p style="font-size:12px;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px">Instagram</p>
+                        <p style="font-size:16px;font-weight:700;color:white">@kodi.app</p>
+                        <p style="font-size:13px;color:#64748b;margin-top:4px">Update & konten terbaru</p>
+                    </div>
+                </div>
+
+                {{-- WhatsApp --}}
+                <a href="https://whatsapp.com/channel/0029Vay0hFn2v1IrMtLECk0M"
+                   style="background:#1e293b;border:1px solid #334155;border-radius:20px;padding:28px 24px;display:flex;align-items:flex-start;gap:18px;text-decoration:none"
+                   onmouseenter="this.style.borderColor='#22c55e'" onmouseleave="this.style.borderColor='#334155'">
+                    <div style="width:48px;height:48px;border-radius:14px;background:rgba(34,197,94,.12);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="#22c55e">
+                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <p style="font-size:12px;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px">WhatsApp Channel</p>
+                        <p style="font-size:16px;font-weight:700;color:white">kodi.app Official</p>
+                        <p style="font-size:13px;color:#22c55e;margin-top:4px;font-weight:600">Klik untuk bergabung →</p>
+                    </div>
+                </a>
+
             </div>
+
+            {{-- Divider --}}
+            <div style="height:1px;background:linear-gradient(90deg,transparent,#334155,transparent);margin-bottom:48px"></div>
+
+            {{-- Mission Statement --}}
+            <div style="text-align:center">
+                <p style="font-size:15px;color:#475569;max-width:640px;margin:0 auto;line-height:1.8;font-style:italic">
+                    "Kami percaya bahwa setiap anak berhak mendapatkan pendidikan yang menyenangkan, bermakna, dan relevan dengan masa depan. kodi.app hadir sebagai jembatan antara teknologi dan semangat belajar."
+                </p>
+                <p style="font-size:13px;color:#334155;margin-top:16px;font-weight:700">— Tim kodi.app</p>
+            </div>
+
         </div>
+    </section>
 
-        <a href="https://whatsapp.com/channel/0029Vay0hFn2v1IrMtLECk0M" class="inline-block px-14 py-6 bg-white text-cyan-600 hover:bg-gray-100 text-2xl font-bold rounded-2xl shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
-            Halaman WhatsApp Kami
-        </a>
-    </div>
-</section>
+    <!-- ===== FOOTER ===== -->
+    <footer style="background:#020617;padding:64px 24px 0">
+        <div style="max-width:1100px;margin:0 auto">
 
+            {{-- Top grid --}}
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:48px;padding-bottom:56px;border-bottom:1px solid #1e293b">
 
+                {{-- Brand --}}
+                <div>
+                    <p style="font-size:28px;font-weight:900;background:linear-gradient(90deg,#06b6d4,#e879f9);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:12px">
+                        kodi.app
+                    </p>
+                    <p style="font-size:14px;color:#64748b;line-height:1.7;max-width:240px">
+                        Platform belajar koding interaktif untuk generasi digital Indonesia yang penuh semangat.
+                    </p>
+                    <div style="display:flex;gap:8px;margin-top:20px;flex-wrap:wrap">
+                        <span style="font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;background:#1e293b;color:#06b6d4;border:1px solid #334155">Laravel</span>
+                        <span style="font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;background:#1e293b;color:#a855f7;border:1px solid #334155">Tailwind</span>
+                        <span style="font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;background:#1e293b;color:#f59e0b;border:1px solid #334155">Alpine.js</span>
+                    </div>
+                </div>
 
-    <!-- Footer -->
-    <footer class="bg-gray-900 text-white py-12 px-6">
-        <div class="max-w-7xl mx-auto text-center">
-            <p class="text-2xl font-bold mb-2 gradient-text">kodi.app</p>
-            <p class="text-gray-400">© 2025 kodi.app — Dibuat dengan cinta untuk generasi petualang digital</p>
+                {{-- Navigasi --}}
+                <div>
+                    <p style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.15em;color:#475569;margin-bottom:20px">Navigasi</p>
+                    <ul style="list-style:none;display:flex;flex-direction:column;gap:12px">
+                        @foreach([['#','Beranda'],['#tentang-kami','Tentang Kami'],['#kontak','Kontak'],['','Portal Guru'],['','Portal Murid']] as [$href,$label])
+                        <li>
+                            <a href="{{ $href ?: route('login') }}"
+                               style="font-size:14px;color:#64748b;text-decoration:none;transition:color .15s"
+                               onmouseenter="this.style.color='#e2e8f0'" onmouseleave="this.style.color='#64748b'">
+                                {{ $label }}
+                            </a>
+                        </li>
+                        @endforeach
+                    </ul>
+                </div>
+
+                {{-- Platform --}}
+                <div>
+                    <p style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.15em;color:#475569;margin-bottom:20px">Platform</p>
+                    <ul style="list-style:none;display:flex;flex-direction:column;gap:12px">
+                        @foreach([['E-Modul','Materi visual & video'],['Kuis Interaktif','Soal pilihan ganda'],['Block Playground','Koding drag & drop'],['Papan Ranking','Kompetisi sehat']] as [$nama,$desc])
+                        <li>
+                            <p style="font-size:14px;color:#e2e8f0;font-weight:600">{{ $nama }}</p>
+                            <p style="font-size:12px;color:#475569;margin-top:2px">{{ $desc }}</p>
+                        </li>
+                        @endforeach
+                    </ul>
+                </div>
+
+                {{-- CTA --}}
+                <div>
+                    <p style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.15em;color:#475569;margin-bottom:20px">Mulai Sekarang</p>
+                    <p style="font-size:14px;color:#64748b;line-height:1.7;margin-bottom:20px">
+                        Bergabung dengan ribuan siswa yang sudah merasakan serunya belajar di kodi.app.
+                    </p>
+                    <a href="{{ route('register') }}"
+                       style="display:inline-block;padding:12px 24px;border-radius:14px;font-size:14px;font-weight:700;color:white;text-decoration:none;background:linear-gradient(135deg,#06b6d4,#a855f7);box-shadow:0 8px 25px -6px rgba(6,182,212,.4)">
+                        Daftar Gratis
+                    </a>
+                    <a href="{{ route('login') }}"
+                       style="display:inline-block;margin-top:10px;padding:12px 24px;border-radius:14px;font-size:14px;font-weight:700;color:#94a3b8;text-decoration:none;border:1px solid #1e293b;transition:border-color .2s"
+                       onmouseenter="this.style.borderColor='#334155';this.style.color='#e2e8f0'" onmouseleave="this.style.borderColor='#1e293b';this.style.color='#94a3b8'">
+                        Masuk
+                    </a>
+                </div>
+
+            </div>
+
+            {{-- Bottom bar --}}
+            <div style="padding:24px 0;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px">
+                <p style="font-size:13px;color:#334155">
+                    © 2025 <span style="color:#475569;font-weight:600">kodi.app</span> — Dibuat dengan dedikasi penuh untuk generasi digital Indonesia.
+                </p>
+                <p style="font-size:12px;color:#1e293b">
+                    Powered by
+                    <span style="color:#334155;font-weight:700">Laravel 11</span> &
+                    <span style="color:#334155;font-weight:700">Tailwind CSS</span>
+                </p>
+            </div>
+
         </div>
     </footer>
 

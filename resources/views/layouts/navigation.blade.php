@@ -14,13 +14,13 @@
 
                 @auth
                     @if(auth()->user()->role === 'siswa')
-                        <a href="{{ route('siswa.home') }}" class="text-sm font-medium text-slate-600 hover:text-indigo-600 transition-colors">Beranda</a>
-                        <a href="{{ route('siswa.modules') }}" class="text-sm font-medium text-slate-600 hover:text-indigo-600 transition-colors">E-Modul</a>
-                        <a href="{{ route('siswa.kuis.index') }}" class="text-sm font-medium text-slate-600 hover:text-indigo-600 transition-colors">Kuis</a>
-                        <a href="{{ route('siswa.quizizz.index') }}" class="text-sm font-medium text-slate-600 hover:text-indigo-600 transition-colors">Quizizz</a>
-                        <a href="{{ route('siswa.proyek.index') }}" class="text-sm font-medium text-slate-600 hover:text-indigo-600 transition-colors">Proyek</a>
-                        <a href="{{ route('siswa.playground.index') }}" class="text-sm font-medium text-slate-600 hover:text-indigo-600 transition-colors">Playground</a>
-                        <a href="{{ route('siswa.ranking') }}" class="text-sm font-medium text-slate-600 hover:text-indigo-600 transition-colors">Ranking</a>
+                        <a href="{{ route('siswa.home') }}" class="text-sm font-bold px-3 py-1.5 rounded-lg text-slate-600 hover:bg-slate-100 transition-colors">🏠 Beranda</a>
+                        <a href="{{ route('siswa.modules') }}" class="text-sm font-bold px-3 py-1.5 rounded-lg text-blue-600 hover:bg-blue-50 transition-colors">📚 E-Modul</a>
+                        <a href="{{ route('siswa.kuis.index') }}" class="text-sm font-bold px-3 py-1.5 rounded-lg text-orange-600 hover:bg-orange-50 transition-colors">🎯 Kuis</a>
+                        <a href="{{ route('siswa.quizizz.index') }}" class="text-sm font-bold px-3 py-1.5 rounded-lg text-emerald-600 hover:bg-emerald-50 transition-colors">🎮 Quizizz</a>
+                        <a href="{{ route('siswa.proyek.index') }}" class="text-sm font-bold px-3 py-1.5 rounded-lg text-purple-600 hover:bg-purple-50 transition-colors">🛠️ Proyek</a>
+                        <a href="{{ route('siswa.playground.index') }}" class="text-sm font-bold px-3 py-1.5 rounded-lg text-yellow-600 hover:bg-yellow-50 transition-colors">⚡ Playground</a>
+                        <a href="{{ route('siswa.ranking') }}" class="text-sm font-bold px-3 py-1.5 rounded-lg text-rose-600 hover:bg-rose-50 transition-colors">🏆 Ranking</a>
                     @elseif(auth()->user()->role === 'guru')
                         <a href="{{ route('guru.home') }}" class="text-sm font-medium text-slate-600 hover:text-indigo-600 transition-colors">Beranda</a>
                         <a href="{{ route('guru.e-modul.index') }}" class="text-sm font-medium text-slate-600 hover:text-indigo-600 transition-colors">E-Modul</a>
@@ -57,7 +57,9 @@
                             <button class="inline-flex items-center gap-2 px-2 py-1.5 hover:bg-slate-100 rounded-lg transition-colors">
                                 <div class="w-7 h-7 rounded-full overflow-hidden bg-indigo-100 flex-shrink-0 flex items-center justify-center">
                                     @if(auth()->user()->avatarUrl())
-                                        <img src="{{ auth()->user()->avatarUrl() }}" alt="" class="w-full h-full object-cover">
+                                        <img src="{{ auth()->user()->avatarUrl() }}" alt="" class="w-full h-full object-cover"
+                                             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                                        <span class="text-xs font-bold text-indigo-700" style="display:none">{{ auth()->user()->initials() }}</span>
                                     @else
                                         <span class="text-xs font-bold text-indigo-700">{{ auth()->user()->initials() }}</span>
                                     @endif
@@ -115,6 +117,8 @@
                     <a href="{{ route('siswa.modules') }}" class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg">E-Modul</a>
                     <a href="{{ route('siswa.kuis.index') }}" class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg">Kuis</a>
                     <a href="{{ route('siswa.quizizz.index') }}" class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg">Quizizz</a>
+                    <a href="{{ route('siswa.proyek.index') }}" class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg">Proyek</a>
+                    <a href="{{ route('siswa.playground.index') }}" class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg">Playground</a>
                     <a href="{{ route('siswa.ranking') }}" class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg">Ranking</a>
                 @elseif(auth()->user()->role === 'guru')
                     <a href="{{ route('guru.home') }}" class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg">Beranda</a>
@@ -122,6 +126,7 @@
                     <a href="{{ route('guru.kuis.index') }}" class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg">Kuis</a>
                     <a href="{{ route('guru.latihan.index') }}" class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg">Latihan</a>
                     <a href="{{ route('guru.siswa.index') }}" class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg">Siswa</a>
+                    <a href="{{ route('guru.proyek.index') }}" class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg">Proyek</a>
                     <a href="{{ route('guru.ranking') }}" class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg">Ranking</a>
                 @elseif(auth()->user()->role === 'admin')
                     <a href="{{ route('admin.home') }}" class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg">Dashboard</a>

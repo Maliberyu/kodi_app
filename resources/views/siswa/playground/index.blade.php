@@ -1,7 +1,12 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="text-xl font-semibold text-slate-800">Coding Playground</h2>
-        <p class="text-sm text-slate-500 mt-0.5">Buat program dengan drag & drop blok kode</p>
+        <div class="flex items-center gap-3">
+            <span class="text-2xl">⚡</span>
+            <div>
+                <h2 class="text-xl font-bold text-slate-800">Coding Playground</h2>
+                <p class="text-xs text-slate-500">Drag & drop blok kode — coding jadi menyenangkan!</p>
+            </div>
+        </div>
     </x-slot>
 
     {{-- Blockly + JS libs --}}

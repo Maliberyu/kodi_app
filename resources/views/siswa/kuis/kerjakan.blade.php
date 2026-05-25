@@ -2,99 +2,159 @@
     <x-slot name="header">
         <div class="flex items-center gap-3">
             <a href="{{ route('siswa.kuis.index') }}"
-               class="inline-flex items-center justify-center w-8 h-8 bg-white border border-slate-200 hover:bg-slate-50 rounded-lg transition-colors">
-                <svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-                </svg>
+               class="inline-flex items-center justify-center w-9 h-9 bg-white border-2 border-slate-200 hover:border-indigo-400 rounded-xl transition-colors text-base font-bold text-slate-600">
+                ←
             </a>
             <div>
-                <h2 class="text-xl font-semibold text-slate-800">{{ $emodul->judul }}</h2>
-                <p class="text-sm text-slate-500 mt-0.5">{{ $kuis->count() }} soal tersedia</p>
+                <h2 class="text-lg font-bold text-slate-800">{{ $emodul->judul }}</h2>
+                <p class="text-xs text-slate-500">{{ $kuis->count() }} soal tersedia</p>
             </div>
         </div>
     </x-slot>
 
-    <div class="py-8">
-        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+    <style>
+        @keyframes slideIn { from{opacity:0;transform:translateX(-16px)} to{opacity:1;transform:translateX(0)} }
+        .soal-card { animation: slideIn .3s ease forwards; opacity:0; }
+        .pilihan-label { transition: all .15s ease; cursor:pointer; }
+        .pilihan-label:hover { border-color:#818cf8 !important; background:#eef2ff !important; }
+        .pilihan-label.dipilih {
+            background: linear-gradient(135deg,#6366f1,#8b5cf6) !important;
+            border-color: transparent !important;
+            transform: scale(1.01);
+            box-shadow: 0 8px 20px -4px rgba(99,102,241,.35);
+            color: white;
+        }
+        .pilihan-label.dipilih .teks-pilihan { color: white !important; }
+        .pilihan-label.dipilih .huruf-badge { background: rgba(255,255,255,.25) !important; color:white !important; }
+    </style>
+
+    <div class="py-6">
+        <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
 
             @if(session('success'))
-                <div class="mb-5 p-4 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-lg text-sm">
-                    {{ session('success') }}
+                <div class="mb-5 p-4 rounded-2xl text-sm font-medium flex items-center gap-2 border-2"
+                     style="background:#f0fdf4;border-color:#86efac;color:#166534">
+                    🎉 {{ session('success') }}
                 </div>
             @endif
 
             @if($kuis->count() > count($sudahDijawab))
+                @php
+                    $total   = $kuis->count();
+                    $dijawab = count($sudahDijawab);
+                    $sisa    = $total - $dijawab;
+                    $persen  = $total > 0 ? round(($dijawab / $total) * 100) : 0;
+                @endphp
 
-                <form method="POST" action="{{ route('siswa.kuis.jawab') }}" class="space-y-4">
+                {{-- Progress --}}
+                <div class="bg-white rounded-2xl border border-slate-200 p-4 mb-5 flex items-center gap-4 shadow-sm">
+                    <div class="flex-1">
+                        <div class="flex justify-between text-xs text-slate-500 mb-1.5 font-medium">
+                            <span>Progress kuis</span>
+                            <span>{{ $dijawab }}/{{ $total }} dijawab</span>
+                        </div>
+                        <div class="h-3 rounded-full overflow-hidden" style="background:#f1f5f9">
+                            <div class="h-full rounded-full transition-all duration-700"
+                                 style="width:{{ $persen }}%;background:linear-gradient(90deg,#f97316,#ec4899)"></div>
+                        </div>
+                    </div>
+                    <div class="flex-shrink-0 text-center">
+                        <p class="text-2xl font-extrabold" style="color:#f97316">{{ $sisa }}</p>
+                        <p class="text-xs text-slate-400">sisa</p>
+                    </div>
+                </div>
+
+                <form method="POST" action="{{ route('siswa.kuis.jawab') }}" class="space-y-5" id="formKuis">
                     @csrf
                     <input type="hidden" name="emodul_id" value="{{ $emodul->id }}">
 
                     @foreach($kuis as $index => $soal)
-                        <div class="bg-white rounded-xl border border-slate-200 p-6">
+                        <div class="soal-card bg-white rounded-3xl overflow-hidden shadow-sm border border-slate-100"
+                             style="animation-delay:{{ $index * 0.07 }}s">
+                            <div class="px-5 py-3 flex items-center gap-3"
+                                 style="background:linear-gradient(135deg,#6366f1,#8b5cf6)">
+                                <span class="w-8 h-8 rounded-xl flex items-center justify-center font-extrabold text-sm flex-shrink-0"
+                                      style="background:rgba(255,255,255,.25);color:white">
+                                    {{ $index + 1 }}
+                                </span>
+                                <span class="text-xs font-medium" style="color:rgba(224,231,255,1)">Soal ke-{{ $index + 1 }}</span>
+                                @if(in_array($soal->id, $sudahDijawab))
+                                    <span class="ml-auto text-xs font-bold px-3 py-1 rounded-full text-white"
+                                          style="background:rgba(255,255,255,.25)">✅ Sudah dijawab</span>
+                                @endif
+                            </div>
+                            <div class="p-6">
+                                <p class="text-base font-bold text-slate-800 leading-relaxed mb-5">{{ $soal->pertanyaan }}</p>
 
-                            <p class="text-sm font-semibold text-slate-500 mb-2">Soal {{ $index + 1 }}</p>
-                            <p class="text-base font-medium text-slate-800 mb-5">{{ $soal->pertanyaan }}</p>
-
-                            @if(in_array($soal->id, $sudahDijawab))
-                                <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-emerald-50 text-emerald-700 text-sm font-medium rounded-lg">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                                    </svg>
-                                    Sudah dijawab
-                                </div>
-                            @else
-                                <div class="space-y-2">
-                                    @foreach(['A', 'B', 'C', 'D'] as $pilihan)
-                                        @php $field = 'pilihan_' . strtolower($pilihan); @endphp
-                                        <label class="flex items-center gap-3 p-3.5 border border-slate-200 rounded-lg cursor-pointer hover:border-indigo-300 hover:bg-indigo-50 transition-all has-[:checked]:border-indigo-500 has-[:checked]:bg-indigo-50">
-                                            <input type="radio"
-                                                   name="jawaban_{{ $soal->id }}"
-                                                   value="{{ $pilihan }}"
-                                                   required
-                                                   class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 border-slate-300">
-                                            <span class="text-sm text-slate-700">
-                                                <span class="font-semibold text-indigo-600">{{ $pilihan }}.</span>
-                                                {{ $soal->$field }}
-                                            </span>
-                                        </label>
-                                    @endforeach
-                                </div>
-                                <input type="hidden" name="kuis_id[]" value="{{ $soal->id }}">
-                            @endif
+                                @if(in_array($soal->id, $sudahDijawab))
+                                    <div class="flex items-center gap-2 rounded-2xl p-3 text-sm font-medium"
+                                         style="background:#f0fdf4;color:#166534">
+                                        ✅ Soal ini sudah kamu jawab
+                                    </div>
+                                @else
+                                    @php
+                                        $hurufBg = ['A'=>'linear-gradient(135deg,#3b82f6,#06b6d4)','B'=>'linear-gradient(135deg,#8b5cf6,#a855f7)','C'=>'linear-gradient(135deg,#f97316,#fbbf24)','D'=>'linear-gradient(135deg,#ef4444,#ec4899)'];
+                                    @endphp
+                                    <div class="space-y-3">
+                                        @foreach(['A','B','C','D'] as $pilihan)
+                                            @php $field = 'pilihan_' . strtolower($pilihan); @endphp
+                                            <label class="pilihan-label flex items-center gap-3 p-4 border-2 border-slate-200 rounded-2xl"
+                                                   data-soal="{{ $soal->id }}">
+                                                <input type="radio"
+                                                       name="jawaban_{{ $soal->id }}"
+                                                       value="{{ $pilihan }}"
+                                                       required
+                                                       class="sr-only"
+                                                       onchange="tandaiDipilih(this)">
+                                                <span class="huruf-badge w-9 h-9 rounded-xl flex items-center justify-center font-extrabold text-sm text-white flex-shrink-0"
+                                                      style="background:{{ $hurufBg[$pilihan] }}">
+                                                    {{ $pilihan }}
+                                                </span>
+                                                <span class="teks-pilihan text-sm font-medium text-slate-700">{{ $soal->$field }}</span>
+                                            </label>
+                                        @endforeach
+                                    </div>
+                                    <input type="hidden" name="kuis_id[]" value="{{ $soal->id }}">
+                                @endif
+                            </div>
                         </div>
                     @endforeach
 
-                    <div class="flex items-center justify-between pt-2">
+                    <div class="flex items-center justify-between pt-2 pb-6">
                         <a href="{{ route('siswa.kuis.index') }}"
-                           class="inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-sm font-medium rounded-lg transition-colors">
-                            Kembali
+                           class="px-5 py-3 text-sm font-bold rounded-2xl transition"
+                           style="background:#f1f5f9;color:#475569">
+                            ← Kembali
                         </a>
                         <button type="submit"
-                                class="inline-flex items-center gap-2 px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-lg transition-colors">
-                            Kirim Jawaban
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                            </svg>
+                                class="px-8 py-3 text-white text-sm font-extrabold rounded-2xl transition flex items-center gap-2"
+                                style="background:linear-gradient(135deg,#f97316,#ec4899);box-shadow:0 10px 30px -6px rgba(249,115,22,.5)">
+                            🚀 Kirim Jawaban!
                         </button>
                     </div>
                 </form>
 
             @else
-                <div class="bg-white rounded-xl border border-emerald-200 p-10 text-center">
-                    <div class="w-12 h-12 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                        </svg>
-                    </div>
-                    <p class="text-lg font-semibold text-slate-800 mb-1">Semua soal telah dikerjakan</p>
-                    <p class="text-sm text-slate-500 mb-5">Kamu sudah menyelesaikan semua soal pada modul ini.</p>
+                <div class="bg-white rounded-3xl p-12 text-center border-2" style="border-color:#a7f3d0;box-shadow:0 10px 40px -8px rgba(16,185,129,.2)">
+                    <div class="text-7xl mb-4" style="animation:bounce 1s infinite">🎉</div>
+                    <h2 class="text-2xl font-extrabold text-slate-800 mb-2">Luar biasa!</h2>
+                    <p class="text-slate-500 mb-6">Kamu sudah menyelesaikan semua soal. Kerja bagus!</p>
                     <a href="{{ route('siswa.kuis.hasil') }}"
-                       class="inline-flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg transition-colors">
-                        Lihat Hasil Kuis
+                       class="inline-flex items-center gap-2 px-8 py-3.5 text-white font-bold rounded-2xl transition"
+                       style="background:linear-gradient(135deg,#10b981,#0d9488);box-shadow:0 8px 25px -4px rgba(16,185,129,.4)">
+                        📊 Lihat Hasil Kuis
                     </a>
                 </div>
             @endif
 
         </div>
     </div>
+
+    <script>
+    function tandaiDipilih(radio) {
+        const soalId = radio.name.replace('jawaban_', '');
+        document.querySelectorAll(`label[data-soal="${soalId}"]`).forEach(l => l.classList.remove('dipilih'));
+        radio.closest('label').classList.add('dipilih');
+    }
+    </script>
 </x-app-layout>

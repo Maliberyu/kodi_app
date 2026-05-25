@@ -26,7 +26,9 @@
                         <div class="w-16 h-16 rounded-full overflow-hidden bg-indigo-100 flex-shrink-0 flex items-center justify-center">
                             @if($user->avatarUrl())
                                 <img src="{{ $user->avatarUrl() }}" alt="Avatar"
-                                     class="w-full h-full object-cover">
+                                     class="w-full h-full object-cover"
+                                     onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                                <span class="text-xl font-bold text-indigo-700" style="display:none">{{ $user->initials() }}</span>
                             @else
                                 <span class="text-xl font-bold text-indigo-700">{{ $user->initials() }}</span>
                             @endif

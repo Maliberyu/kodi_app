@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Storage;
 
 class User extends Authenticatable
 {
@@ -81,7 +82,7 @@ class User extends Authenticatable
     // =========================
     public function avatarUrl(): string
     {
-        if ($this->avatar && file_exists(storage_path('app/public/avatars/' . $this->avatar))) {
+        if ($this->avatar && Storage::disk('public')->exists('avatars/' . $this->avatar)) {
             return asset('storage/avatars/' . $this->avatar);
         }
         return '';

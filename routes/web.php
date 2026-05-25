@@ -10,6 +10,7 @@ use App\Http\Controllers\Siswa\ProyekController as SiswaProyekController;
 use App\Http\Controllers\Siswa\PlaygroundController;
 use App\Http\Controllers\Guru\LatihanController;
 use App\Http\Controllers\Guru\ProyekController as GuruProyekController;
+use App\Http\Controllers\DemoController;
 
 // Halaman depan
 Route::get('/', function () {
@@ -19,6 +20,10 @@ Route::get('/', function () {
 Route::get('/profile/bu-Risda', function () {
     return view('profile.bu-Risda');
 });
+
+// Demo pages (no auth required)
+Route::get('/demo/murid', [DemoController::class, 'siswa'])->name('demo.siswa');
+Route::get('/demo/guru',  [DemoController::class, 'guru'])->name('demo.guru');
 
 // Redirect otomatis berdasarkan role
 Route::get('/home', function () {
