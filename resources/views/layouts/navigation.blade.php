@@ -4,8 +4,9 @@
 
             <!-- Logo -->
             <div class="flex items-center">
-                <a href="{{ route('home') }}" class="text-xl font-bold text-indigo-600 tracking-tight">
-                    Kodi<span class="text-slate-800">.app</span>
+                <a href="{{ route('home') }}" class="flex items-center gap-2">
+                    <img src="{{ asset('icon/icon.png') }}" alt="KODI" class="h-8 w-8 object-contain">
+                    <span class="text-xl font-bold text-indigo-600 tracking-tight">Kodi<span class="text-slate-800">.app</span></span>
                 </a>
             </div>
 

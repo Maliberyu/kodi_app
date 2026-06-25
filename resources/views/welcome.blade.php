@@ -4,7 +4,15 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>kodi.app - Belajar Seru untuk Generasi Digital</title>
-    <meta name="description" content="Platform belajar interaktif penuh warna untuk anak dan remaja. Seru, modern, dan bikin ketagihan belajar!">
+    <meta name="description" content="Platform belajar interaktif penuh warna untuk anak dan remaja.">
+
+    <link rel="manifest" href="{{ url('/manifest.json') }}">
+    <meta name="theme-color" content="#7c3aed">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="KODI">
+    <link rel="apple-touch-icon" href="{{ asset('icon/icon.png') }}">
 
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=instrument-sans:500,600,700&display=swap" rel="stylesheet">
@@ -12,432 +20,626 @@
     @vite(['resources/css/app.css'])
 
     <style>
-        :root {
-            --cyan: #06b6d4;
-            --fuchsia: #e879f9;
-            --amber: #f59e0b;
-            --purple: #a855f7;
-            --pink: #ec4899;
+        * { box-sizing: border-box; }
+        body { font-family: 'Instrument Sans', sans-serif; margin: 0; background: linear-gradient(135deg, #f8faff 0%, #fdf4ff 50%, #f0fdff 100%); min-height: 100vh; }
+
+        /* ===== PHASE 1: SPLINE PRE-SCREEN ===== */
+        #spline-pre {
+            position: fixed; inset: 0; z-index: 10000;
+            background: linear-gradient(135deg, #f8faff 0%, #fdf4ff 50%, #f0fdff 100%);
+            overflow: hidden;
+            transition: opacity 1.2s cubic-bezier(.4,0,.2,1);
         }
-        .gradient-line { background: linear-gradient(90deg, #ffcb2d, #ff4dd2); height: 5px; }
-        .gradient-text { background: linear-gradient(90deg, var(--cyan), var(--fuchsia)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-        .btn-primary { @apply px-10 py-4 bg-cyan-500 hover:bg-cyan-600 text-white font-bold rounded-2xl shadow-lg hover:shadow-cyan-500/30 transform hover:scale-105 transition-all duration-300; }
-        .btn-secondary { @apply px-10 py-4 bg-amber-400 hover:bg-amber-500 text-white font-bold rounded-2xl shadow-lg hover:shadow-amber-500/30 transform hover:scale-105 transition-all duration-300; }
+        #spline-pre.fade-out { opacity: 0; pointer-events: none; }
+        #spline-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+
+        #spline-loader {
+            position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
+            display: flex; align-items: center; gap: 10px;
+            font-family: 'Instrument Sans', sans-serif;
+            font-size: 13px; font-weight: 600; letter-spacing: .08em; color: #94a3b8;
+            white-space: nowrap; transition: opacity .5s;
+        }
+        #spline-loader.hide { opacity: 0; }
+        .loader-dots { display: flex; gap: 5px; }
+        .loader-dots span {
+            width: 7px; height: 7px; border-radius: 50%;
+            animation: dotBounce 1.2s ease-in-out infinite;
+        }
+        .loader-dots span:nth-child(1) { background: #06b6d4; }
+        .loader-dots span:nth-child(2) { background: #a855f7; animation-delay: .2s; }
+        .loader-dots span:nth-child(3) { background: #7c3aed; animation-delay: .4s; }
+        @keyframes dotBounce {
+            0%, 80%, 100% { transform: scale(.55); opacity: .35; }
+            40%            { transform: scale(1);   opacity: 1; }
+        }
+
+        /* ===== PHASE 2: DARK INTRO SCREEN ===== */
+        #intro-screen {
+            position: fixed; inset: 0; z-index: 9999;
+            background: linear-gradient(135deg, #0f0820 0%, #1a0a3e 55%, #060e24 100%);
+            display: flex; align-items: center; justify-content: center;
+            overflow: hidden;
+        }
+        #intro-screen.exit {
+            animation: introFadeOut 0.9s cubic-bezier(.4,0,.2,1) forwards;
+        }
+        @keyframes introFadeOut {
+            0%   { opacity: 1; transform: scale(1); }
+            100% { opacity: 0; transform: scale(1.04); }
+        }
+
+        /* Scan line */
+        #intro-scan {
+            position: absolute; left: 0; right: 0; height: 2px;
+            background: linear-gradient(90deg, transparent 0%, #06b6d4 30%, #a855f7 70%, transparent 100%);
+            box-shadow: 0 0 18px 4px rgba(168,85,247,.5), 0 0 40px 8px rgba(6,182,212,.3);
+            animation: scanMove 2.4s ease-in-out infinite;
+            z-index: 2;
+        }
+        @keyframes scanMove {
+            0%   { top: -2px; opacity: 0; }
+            5%   { opacity: 1; }
+            95%  { opacity: 1; }
+            100% { top: 100%; opacity: 0; }
+        }
+
+        /* Grid overlay */
+        #intro-grid {
+            position: absolute; inset: 0; z-index: 1;
+            background-image:
+                linear-gradient(rgba(168,85,247,.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(168,85,247,.04) 1px, transparent 1px);
+            background-size: 48px 48px;
+        }
+
+        /* Center content */
+        #intro-center {
+            position: relative; z-index: 3;
+            display: flex; flex-direction: column; align-items: center; gap: 14px;
+            opacity: 0;
+        }
+        #intro-center.show {
+            animation: introTextIn 0.9s cubic-bezier(.175,.885,.32,1.275) forwards;
+        }
+        @keyframes introTextIn {
+            0%   { opacity: 0; transform: scale(0.5) translateY(20px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        #intro-logo {
+            font-size: clamp(4rem, 14vw, 7rem);
+            font-weight: 900; letter-spacing: -2px;
+            background: linear-gradient(90deg, #06b6d4, #a855f7, #06b6d4);
+            background-size: 200% auto;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+            animation: gradientShift 2.5s linear infinite;
+        }
+        #intro-center.show #intro-logo {
+            animation: gradientShift 2.5s linear infinite, glowPulse 2s ease-in-out 0.5s infinite;
+        }
+        @keyframes gradientShift {
+            0%   { background-position: 0% center; }
+            100% { background-position: 200% center; }
+        }
+        @keyframes glowPulse {
+            0%, 100% { filter: drop-shadow(0 0 12px rgba(168,85,247,.6)) drop-shadow(0 0 28px rgba(6,182,212,.4)); }
+            50%       { filter: drop-shadow(0 0 28px rgba(168,85,247,.9)) drop-shadow(0 0 60px rgba(6,182,212,.7)); }
+        }
+
+        #intro-tagline {
+            font-size: clamp(12px, 2.5vw, 16px);
+            font-weight: 600; letter-spacing: .35em; text-transform: uppercase;
+            color: rgba(255,255,255,.55);
+        }
+
+        /* Progress bar */
+        #intro-progress {
+            position: absolute; bottom: 0; left: 0; height: 3px;
+            background: linear-gradient(90deg, #06b6d4, #a855f7);
+            width: 0%; z-index: 10;
+        }
+
+        .gradient-text {
+            background: linear-gradient(90deg, #06b6d4, #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Tombol seimbang: lebar sama di semua breakpoint */
+        .btn-group { display: flex; gap: 14px; flex-wrap: wrap; }
+        .btn-group a {
+            flex: 1 1 0;
+            min-width: 140px;
+            text-align: center;
+            padding: 15px 24px;
+            font-size: 15px;
+            font-weight: 700;
+            border-radius: 14px;
+            text-decoration: none;
+            transition: transform .2s, box-shadow .2s;
+        }
+        .btn-group a:hover { transform: translateY(-2px); }
+        .btn-cyan  { background: #06b6d4; color: #fff; box-shadow: 0 6px 20px -4px rgba(6,182,212,.4); }
+        .btn-cyan:hover  { background: #0891b2; box-shadow: 0 10px 28px -4px rgba(6,182,212,.5); }
+        .btn-purple { background: #7c3aed; color: #fff; box-shadow: 0 6px 20px -4px rgba(124,58,237,.4); }
+        .btn-purple:hover { background: #6d28d9; }
+
+        .card-hover { transition: transform .25s, box-shadow .25s; }
+        .card-hover:hover { transform: translateY(-6px); box-shadow: 0 24px 48px -12px rgba(0,0,0,.15) !important; }
+
+        /* Responsive hero */
+        .hero-wrap { display: flex; align-items: center; gap: 56px; }
+        .hero-text { flex: 1; min-width: 0; }
+        .hero-anim { flex-shrink: 0; }
+
+        @media (max-width: 767px) {
+            .hero-wrap { flex-direction: column-reverse; gap: 24px; }
+            .hero-text { text-align: center; }
+            .hero-text .btn-group { justify-content: center; }
+            .hero-anim dotlottie-wc { width: 270px !important; height: 270px !important; }
+        }
     </style>
 </head>
 
-<body class="bg-gradient-to-br from-yellow-50 via-pink-50 to-purple-50 min-h-screen flex flex-col font-sans antialiased">
+<body>
 
-    <!-- Navbar -->
-    
-    <nav class="bg-white/90 backdrop-blur-md shadow-lg sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-6 py-5 flex justify-between items-center">
-            <a href="#" class="text-3xl font-black gradient-text">kodi.app</a>
+    {{-- ===== PHASE 1: Spline scene (clean, no overlay) ===== --}}
+    <div id="spline-pre">
+        <canvas id="spline-canvas" data-url="{{ asset('scene.splinecode') }}"></canvas>
+        <div id="spline-loader">
+            <div class="loader-dots"><span></span><span></span><span></span></div>
+            <span>memuat scene...</span>
+        </div>
+    </div>
 
-            <!-- Desktop Menu -->
-            <div class="hidden md:flex items-center space-x-10">
-                <a href="#" class="text-gray-700 font-medium hover:text-cyan-600 transition">Beranda</a>
-                <a href="#tentang-kami" class="text-gray-700 font-medium hover:text-cyan-600 transition">Tentang Kami</a>
-                <a href="#kontak" class="text-gray-700 font-medium hover:text-cyan-600 transition">Kontak</a>
-                <a href="{{ route('login') }}" class="px-6 py-2.5 bg-amber-400 hover:bg-amber-500 text-white font-bold rounded-xl shadow-md transition">
+    {{-- ===== PHASE 2: Dark intro screen (kodi.app text) ===== --}}
+    <div id="intro-screen">
+        <div id="intro-grid"></div>
+        <div id="intro-scan"></div>
+        <div id="intro-center">
+            <div id="intro-logo">kodi.app</div>
+            <div id="intro-tagline">Platform Belajar Interaktif</div>
+        </div>
+        <div id="intro-progress"></div>
+    </div>
+
+    {{-- ===== NAVBAR ===== --}}
+    <nav style="background: rgba(255,255,255,.93); backdrop-filter: blur(12px); border-bottom: 1px solid #f1f5f9; position: sticky; top: 0; z-index: 100;">
+        <div style="max-width: 1200px; margin: 0 auto; padding: 14px 24px; display: flex; justify-content: space-between; align-items: center;">
+
+            <a href="#" style="display: flex; align-items: center; gap: 10px; text-decoration: none;">
+                <!-- <img src="{{ asset('icon/icon.png') }}" alt="KODI" style="width: 36px; height: 36px; border-radius: 10px; object-fit: contain;"> -->
+                <span class="gradient-text" style="font-size: 21px; font-weight: 900; letter-spacing: -.5px;">kodi.app</span>
+            </a>
+
+            <div id="nav-links" style="display: flex; align-items: center; gap: 28px;">
+                <a href="#" style="color: #475569; font-weight: 600; font-size: 14px; text-decoration: none;">Beranda</a>
+                <a href="#tentang-kami" style="color: #475569; font-weight: 600; font-size: 14px; text-decoration: none;">Tentang Kami</a>
+                <a href="#kontak" style="color: #475569; font-weight: 600; font-size: 14px; text-decoration: none;">Kontak</a>
+                <a href="{{ route('login') }}"
+                   style="padding: 9px 22px; background: #7c3aed; color: #fff; font-weight: 700; font-size: 14px; border-radius: 10px; text-decoration: none;">
                     Masuk
                 </a>
             </div>
 
-            <!-- Mobile Menu Toggle -->
-            <button id="mobile-menu-btn" class="md:hidden text-3xl focus:outline-none">☰</button>
+            <button id="hamburger" onclick="toggleMenu()"
+                    style="display: none; background: none; border: none; cursor: pointer; padding: 4px;">
+                <svg id="icon-menu" width="26" height="26" fill="none" stroke="#334155" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
+                </svg>
+                <svg id="icon-close" width="26" height="26" fill="none" stroke="#334155" stroke-width="2" viewBox="0 0 24 24" style="display:none">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
         </div>
 
-        <!-- Mobile Menu -->
-        <div id="mobile-menu" class="hidden md:hidden bg-white shadow-lg">
-            <div class="px-6 py-4 space-y-4 text-center">
-                <a href="#" class="block text-gray-700 font-medium hover:text-cyan-600">Beranda</a>
-                <a href="#tentang-kami" class="block text-gray-700 font-medium hover:text-cyan-600">Tentang Kami</a>
-                <a href="#kontak" class="block text-gray-700 font-medium hover:text-cyan-600">Kontak</a>
-                <a href="{{ route('login') }}" class="block py-3 bg-amber-400 text-white font-bold rounded-xl">Masuk</a>
+        <div id="mobile-menu" style="display: none; background: #fff; border-top: 1px solid #f1f5f9; padding: 16px 24px 20px;">
+            <div style="display: flex; flex-direction: column; gap: 10px; text-align: center;">
+                <a href="#" style="color: #475569; font-weight: 600; font-size: 15px; text-decoration: none; padding: 8px 0;">Beranda</a>
+                <a href="#tentang-kami" style="color: #475569; font-weight: 600; font-size: 15px; text-decoration: none; padding: 8px 0;">Tentang Kami</a>
+                <a href="#kontak" style="color: #475569; font-weight: 600; font-size: 15px; text-decoration: none; padding: 8px 0;">Kontak</a>
+                <a href="{{ route('login') }}"
+                   style="padding: 13px; background: #7c3aed; color: #fff; font-weight: 700; border-radius: 12px; text-decoration: none;">
+                    Masuk
+                </a>
+                <a href="{{ route('register') }}"
+                   style="padding: 13px; background: #06b6d4; color: #fff; font-weight: 700; border-radius: 12px; text-decoration: none;">
+                    Daftar Gratis
+                </a>
             </div>
         </div>
     </nav>
 
-    <div class="gradient-line"></div>
+    {{-- ===== HERO ===== --}}
+    <section id="beranda" style="max-width: 1200px; margin: 0 auto; padding: 72px 24px 56px;">
+        <div class="hero-wrap">
 
-    <!-- Hero Section -->
-    <!-- Hero Section – Tombol sudah dibenerin & dibikin MANTAP -->
-<section id="beranda" class="flex-1 flex flex-col items-center justify-center px-6 py-20 text-center">
-    <dotlottie-wc
-        src="https://lottie.host/eead6ccc-66c8-486b-8d9b-32f5d52cd2ed/mH8xK5Pov1.lottie"
-        background="transparent"
-        speed="0.9"
-        style="width: 420px; height: 420px; max-width: 90vw;"
-        autoplay loop hover>
-    </dotlottie-wc>
+            {{-- Kiri: Teks --}}
+            <div class="hero-text">
+                <span style="display: inline-block; padding: 6px 16px; background: #ede9fe; color: #7c3aed; font-size: 12px; font-weight: 700; border-radius: 20px; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 22px;">
+                    Platform Belajar Interaktif
+                </span>
 
-    <h1 class="text-4xl md:text-6xl font-black gradient-text mt-12 mb-6 leading-tight">
-        Selamat Datang di kodi.app
-    </h1>
-    <h1 class="text-4xl md:text-6xl font-black gradient-text mt-12 mb-6 leading-tight">
-        
-    </h1>
-    <p class="text-xl md:text-2xl text-gray-700 max-w-3xl mx-auto font-medium mb-16">
-        Platform belajar interaktif yang bikin anak dan remaja jatuh cinta sama ilmu pengetahuan!
-    </p>
+                <h1 style="font-size: clamp(2rem, 5vw, 3.25rem); font-weight: 900; line-height: 1.15; color: #0f172a; margin: 0 0 18px;">
+                    Belajar Lebih Seru,<br>
+                    <span class="gradient-text">Masa Depan Lebih Cerah</span>
+                </h1>
 
-    <!-- TOMBOL UTAMA – SEKARANG GEDE & GLOWING -->
-    <div class="flex flex-col sm:flex-row gap-8 justify-center items-center">
-        <!-- Masuk Sekarang -->
-        <a href="{{ route('login') }}"
-            class="group relative px-12 py-6 bg-cyan-500 hover:bg-cyan-600 text-white text-xl font-bold rounded-2xl shadow-xl hover:shadow-cyan-500/40 transform hover:scale-105 transition-all duration-300">
-                Masuk Sekarang
-            </a>
+                <p style="font-size: 17px; color: #64748b; line-height: 1.75; margin: 0 0 36px; max-width: 460px;">
+                    Platform belajar interaktif untuk anak dan remaja. Kuis, e-modul, coding playground, dan papan ranking — semua dalam satu tempat.
+                </p>
 
-            <a href="{{ route('register') }}"
-            class="group relative px-12 py-6 bg-amber-400 hover:bg-amber-500 text-white text-xl font-bold rounded-2xl shadow-xl hover:shadow-amber-500/40 transform hover:scale-105 transition-all duration-300">
-                Daftar Gratis
-            </a>
-    </div>
-
-    <p class="mt-mb-10 mt-12 text-gray-600 text-lg">
-        Sedikit belajar hari ini, banyak manfaat di kemudian hari.
-    </p>
-</section>
-
-    <!-- Tentang Kami -->
-    <section id="tentang-kami" class="py-24 px-6 bg-white">
-        <div class="max-w-6xl mx-auto">
-            <h2 class="text-5xl md:text-6xl font-black gradient-text text-center mb-16">
-                Tentang Kami
-            </h2>
-
-            <div class="grid md:grid-cols-2 gap-12 items-center mb-20">
-                <div>
-                    <h3 class="text-3xl font-bold text-gray-800 mb-6">Siapa Kami?</h3>
-                    <p class="text-lg text-gray-600 leading-relaxed">
-                        kodi.app adalah platform belajar daring yang lahir dari mimpi besar: membuat belajar jadi petualangan seru bagi generasi digital. Kami menggabungkan animasi keren, game, dan tantangan interaktif agar belajar nggak lagi terasa seperti "tugas".
-                    </p>
+                <div class="btn-group">
+                    <a href="{{ route('login') }}" class="btn-cyan">Masuk Sekarang</a>
+                    <a href="{{ route('register') }}" class="btn-purple">Daftar Gratis</a>
                 </div>
-                <div>
-                    <h3 class="text-3xl font-bold text-gray-800 mb-6">Misi Kami</h3>
-                    <p class="text-lg text-gray-600 leading-relaxed">
-                        Memberdayakan setiap anak dan remaja untuk menemukan cara belajar yang paling mereka suka. Kami ingin setiap "Aha!" moment terjadi setiap hari — bukan cuma saat ulangan.
-                    </p>
-                </div>
-            </div>
-        <!-- Judul Tim Praktisi -->
-        <div class="text-center mb-14">
-            <p class="text-sm font-bold tracking-widest text-cyan-500 uppercase mb-3">The Future Leader</p>
-            <h3 class="text-4xl md:text-5xl font-black gradient-text mb-4">
-                Tim Praktisi Kami
-            </h3>
-            <p class="text-xl text-gray-600 max-w-2xl mx-auto">
-                Belajar bersama para praktisi keren yang mendedikasikan ilmunya untuk generasi digital!
-            </p>
-        </div>
 
-        <!-- Baris 1: Bu Risda (featured, centered, lebih besar) -->
-        <div class="flex justify-center mb-20">
-            <a href="/kodi_app/public/profile/bu-Risda" class="block group w-full max-w-sm">
-                <div class="bg-white rounded-3xl shadow-2xl overflow-hidden transition-all duration-300 group-hover:shadow-cyan-200 group-hover:-translate-y-4"
-                     style="box-shadow:0 25px 60px -12px rgba(6,182,212,.25)">
-
-                    <!-- Crown badge -->
-                    <div class="relative">
-                        <div class="h-96 overflow-hidden">
-                            <img src="{{ asset('storage/poto.jpeg') }}"
-                                 alt="Bu Risda"
-                                 class="w-full h-full object-cover group-hover:scale-105 transition-all duration-500">
-                        </div>
-                        <!-- Leader badge -->
-                        <div class="absolute top-4 left-1/2 -translate-x-1/2">
-                            <span class="px-4 py-1.5 text-xs font-black rounded-full text-white tracking-widest"
-                                  style="background:linear-gradient(135deg,#06b6d4,#a855f7);box-shadow:0 4px 15px -3px rgba(6,182,212,.5)">
-                                ★ THE LEADER
-                            </span>
-                        </div>
-                    </div>
-
-                    <div class="p-7 text-center" style="background:linear-gradient(180deg,#ecfeff,white)">
-                        <h4 class="text-2xl font-black text-gray-800">Risda Ayulia Apandi, S.Pd.</h4>
-                        <p class="font-bold mt-1" style="color:#06b6d4">Guru Koding</p>
-                        <p class="text-sm text-gray-500 mt-1">Pendidik & Inisiator kodi.app</p>
-                        <span class="inline-block mt-4 px-5 py-2 text-sm font-bold rounded-full text-white transition"
-                              style="background:linear-gradient(135deg,#06b6d4,#a855f7)">
-                            Lihat Portofolio →
-                        </span>
-                    </div>
-                </div>
-            </a>
-        </div>
-
-        <!-- Pemisah & label Tim Pengembang -->
-        <div class="flex items-center gap-4 max-w-2xl mx-auto mb-10 px-4">
-            <div class="flex-1 h-px" style="background:linear-gradient(90deg,transparent,#e2e8f0)"></div>
-            <p class="text-xs font-bold tracking-widest uppercase text-gray-400 whitespace-nowrap">Tim Pengembang</p>
-            <!-- <p class="text-xs font-bold tracking-widest uppercase text-gray-400 whitespace-nowrap">---------------</p> -->
-            <div class="flex-1 h-px" style="background:linear-gradient(90deg,#e2e8f0,transparent)"></div>
-        </div>
-
-        <!-- Baris 2: Aris & Alwi (tim, lebih kecil, 2 kolom) -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-8 max-w-2xl mx-auto mb-20 px-4 md:px-0">
-
-            <!-- Aris -->
-            <div class="bg-white rounded-3xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 hover:-translate-y-3">
-                <div class="h-64 overflow-hidden">
-                    <img src="https://avatars.githubusercontent.com/u/219940777?v=4"
-                         alt="Aris Sunandar"
-                         class="w-full h-full object-cover">
-                </div>
-                <div class="p-5 text-center" style="background:linear-gradient(180deg,#faf5ff,white)">
-                    <h4 class="text-lg font-bold text-gray-800">Aris Sunandar, Amd.Kom.</h4>
-                    <p class="font-semibold mt-1 text-sm" style="color:#9333ea">Frontend Developer</p>
-                </div>
+                <p style="margin-top: 22px; font-size: 13px; color: #94a3b8; font-style: italic;">
+                    Sedikit belajar hari ini, banyak manfaat di kemudian hari.
+                </p>
             </div>
 
-            <!-- Alwi -->
-            <div class="bg-white rounded-3xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 hover:-translate-y-3">
-                <div class="h-64 overflow-hidden">
-                    <img src="https://media.licdn.com/dms/image/v2/D5603AQHebX5W-ckZoQ/profile-displayphoto-scale_200_200/B56ZwETLRtKsAY-/0/1769598662550?e=2147483647&v=beta&t=fJOX3_iINZkHdIk2ihjHMR75in6j-c9vmvaoqTwb3Mc"
-                         alt="Alwi Nurfaizi"
-                         class="w-full h-full object-cover">
-                </div>
-                <div class="p-5 text-center" style="background:linear-gradient(180deg,#fffbeb,white)">
-                    <h4 class="text-lg font-bold text-gray-800">Alwi Nurfaizi, S.Kom.</h4>
-                    <p class="font-semibold mt-1 text-sm" style="color:#d97706">Backend Developer</p>
-                </div>
+            {{-- Kanan: Animasi --}}
+            <div class="hero-anim">
+                <dotlottie-wc
+                    src="https://lottie.host/eead6ccc-66c8-486b-8d9b-32f5d52cd2ed/mH8xK5Pov1.lottie"
+                    background="transparent"
+                    speed="0.9"
+                    style="width: 400px; height: 400px; max-width: 85vw; display: block;"
+                    autoplay loop hover>
+                </dotlottie-wc>
             </div>
 
-        </div>
-
-            {{-- ===== PORTAL MASUK ===== --}}
-            <div style="margin-top:5rem;margin-bottom:4rem">
-                <div class="text-center mb-12">
-                    <h3 class="text-4xl md:text-5xl font-black gradient-text mb-4">
-                        Masuk ke Portal
-                    </h3>
-                    <p class="text-xl text-gray-600 max-w-2xl mx-auto">
-                        Pilih portal sesuai peranmu dan mulai petualangan belajar!
-                    </p>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-
-                    {{-- Portal Guru --}}
-                    <div class="rounded-3xl overflow-hidden shadow-xl" style="box-shadow:0 20px 50px -12px rgba(99,102,241,.25)">
-                        <div class="p-8 text-white text-center"
-                             style="background:linear-gradient(135deg,#6366f1,#7c3aed,#9333ea)">
-                            <div class="text-6xl mb-3">🎓</div>
-                            <h4 class="text-2xl font-black">Portal Guru</h4>
-                            <p class="text-sm mt-2" style="color:rgba(224,231,255,1)">
-                                Kelola kelas & pantau perkembangan siswa
-                            </p>
-                        </div>
-                        <div class="p-6 bg-white">
-                            <ul class="space-y-3 mb-6">
-                                @foreach([['📚','Buat & kelola E-Modul'],['🎯','Buat soal kuis interaktif'],['🛠️','Nilai proyek siswa'],['🏆','Pantau ranking & progress']] as [$ico,$txt])
-                                <li class="flex items-center gap-3 text-gray-700 text-sm font-medium">
-                                    <span class="w-8 h-8 rounded-xl flex items-center justify-center text-sm flex-shrink-0"
-                                          style="background:linear-gradient(135deg,#6366f1,#7c3aed)">{{ $ico }}</span>
-                                    {{ $txt }}
-                                </li>
-                                @endforeach
-                            </ul>
-                            <div class="flex gap-3">
-                                <a href="{{ route('demo.guru') }}"
-                                   class="flex-1 py-3 text-center text-sm font-bold rounded-2xl transition"
-                                   style="background:#eef2ff;color:#6366f1">
-                                        Lihat Demo
-                                </a>
-                                @if(auth()->check() && auth()->user()->isGuru())
-                                    <a href="{{ route('guru.home') }}"
-                                       class="flex-1 py-3 text-center text-white text-sm font-bold rounded-2xl"
-                                       style="background:linear-gradient(135deg,#6366f1,#7c3aed)">🚀 Dashboard</a>
-                                @else
-                                    <a href="{{ route('login') }}"
-                                       class="flex-1 py-3 text-center text-white text-sm font-bold rounded-2xl"
-                                       style="background:linear-gradient(135deg,#6366f1,#7c3aed)"> Login</a>
-                                @endif
-                            </div>
-                        </div>
-                    </div>
-
-                    {{-- Portal Murid --}}
-                    <div class="rounded-3xl overflow-hidden shadow-xl" style="box-shadow:0 20px 50px -12px rgba(249,115,22,.25)">
-                        <div class="p-8 text-white text-center"
-                             style="background:linear-gradient(135deg,#f97316,#ec4899,#a855f7)">
-                            <div class="text-6xl mb-3">🧑‍💻</div>
-                            <h4 class="text-2xl font-black">Portal Murid</h4>
-                            <p class="text-sm mt-2" style="color:rgba(255,237,213,1)">
-                                Belajar seru, kumpulkan poin & raih juara!
-                            </p>
-                        </div>
-                        <div class="p-6 bg-white">
-                            <ul class="space-y-3 mb-6">
-                                @foreach([['📖','Pelajari E-Modul seru'],['🎮','Kerjakan kuis & tantangan'],['⚡','Coding di Block Playground'],['🏆','Bersaing di papan ranking']] as [$ico,$txt])
-                                <li class="flex items-center gap-3 text-gray-700 text-sm font-medium">
-                                    <span class="w-8 h-8 rounded-xl flex items-center justify-center text-sm flex-shrink-0"
-                                          style="background:linear-gradient(135deg,#f97316,#ec4899)">{{ $ico }}</span>
-                                    {{ $txt }}
-                                </li>
-                                @endforeach
-                            </ul>
-                            <div class="flex gap-3">
-                                <a href="{{ route('demo.siswa') }}"
-                                   class="flex-1 py-3 text-center text-sm font-bold rounded-2xl transition"
-                                   style="background:#fff7ed;color:#f97316">
-                                     Lihat Demo
-                                </a>
-                                @if(auth()->check() && auth()->user()->isSiswa())
-                                    <a href="{{ route('siswa.home') }}"
-                                       class="flex-1 py-3 text-center text-white text-sm font-bold rounded-2xl"
-                                       style="background:linear-gradient(135deg,#f97316,#ec4899)">🚀 Dashboard</a>
-                                @else
-                                    <a href="{{ route('login') }}"
-                                       class="flex-1 py-3 text-center text-white text-sm font-bold rounded-2xl"
-                                       style="background:linear-gradient(135deg,#f97316,#ec4899)"> Login</a>
-                                @endif
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-            {{-- ===== END PORTAL ===== --}}
-
-            <!-- Stats -->
-            <!-- <div class="grid grid-cols-2 md:grid-cols-4 gap-10 text-center">
-                <div class="bg-gradient-to-br from-cyan-50 to-cyan-100 rounded-2xl p-8 shadow-md">
-                    <div class="text-5xl font-black text-cyan-600">10K+</div>
-                    <p class="text-gray-700 font-medium mt-3">Pengguna Aktif</p>
-                </div>
-                <div class="bg-gradient-to-br from-fuchsia-50 to-fuchsia-100 rounded-2xl p-8 shadow-md">
-                    <div class="text-5xl font-black text-fuchsia-600">500+</div>
-                    <p class="text-gray-700 font-medium mt-3">Materi Seru</p>
-                </div>
-                <div class="bg-gradient-to-br from-amber-50 to-amber-100 rounded-2xl p-8 shadow-md">
-                    <div class="text-5xl font-black text-amber-600">50+</div>
-                    <p class="text-gray-700 font-medium mt-3">Kelas Interaktif</p>
-                </div>
-                <div class="bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl p-8 shadow-md">
-                    <div class="text-5xl font-black text-purple-600">24/7</div>
-                    <p class="text-gray-700 font-medium mt-3">Belajar Kapan Saja</p>
-                </div>
-            </div> -->
         </div>
     </section>
 
-    <!-- ===== KONTAK ===== -->
-    <section id="kontak" style="background:#0f172a;padding:96px 24px">
-        <div style="max-width:1100px;margin:0 auto">
+    {{-- ===== FITUR STRIP ===== --}}
+    <div style="background: #fff; border-top: 1px solid #f1f5f9; border-bottom: 1px solid #f1f5f9; padding: 32px 24px;">
+        <div style="max-width: 960px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 28px;">
+            @php
+            $features = [
+                ['#06b6d4', 'E-Modul', 'Materi visual & interaktif',
+                 'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253'],
+                ['#7c3aed', 'Kuis', 'Soal seru & menantang',
+                 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z'],
+                ['#ec4899', 'Playground', 'Coding drag & drop',
+                 'M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4'],
+                ['#f59e0b', 'Ranking', 'Kompetisi yang sehat',
+                 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z'],
+            ];
+            @endphp
+            @foreach($features as [$color, $nama, $desc, $path])
+            <div style="display: flex; align-items: center; gap: 14px;">
+                <div style="width: 46px; height: 46px; border-radius: 13px; background: {{ $color }}18; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                    <svg width="22" height="22" fill="none" stroke="{{ $color }}" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="{{ $path }}"/>
+                    </svg>
+                </div>
+                <div>
+                    <p style="font-size: 14px; font-weight: 700; color: #1e293b; margin: 0 0 2px;">{{ $nama }}</p>
+                    <p style="font-size: 12px; color: #94a3b8; margin: 0;">{{ $desc }}</p>
+                </div>
+            </div>
+            @endforeach
+        </div>
+    </div>
 
-            {{-- Header --}}
-            <div style="text-align:center;margin-bottom:64px">
-                <p style="font-size:12px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#06b6d4;margin-bottom:12px">
-                    Hubungi Kami
-                </p>
-                <h2 style="font-size:clamp(2rem,5vw,3.5rem);font-weight:900;color:white;margin-bottom:16px;line-height:1.15">
-                    Punya Pertanyaan?
-                </h2>
-                <p style="font-size:18px;color:#94a3b8;max-width:560px;margin:0 auto;line-height:1.7">
-                    Saran, kritik, atau ingin berkolaborasi? Tim kodi.app selalu terbuka dan siap merespons dengan sepenuh hati.
+    {{-- ===== TENTANG KAMI ===== --}}
+    <section id="tentang-kami" style="background: #fff; padding: 96px 24px;">
+        <div style="max-width: 1100px; margin: 0 auto;">
+
+            <div style="text-align: center; margin-bottom: 64px;">
+                <p style="font-size: 12px; font-weight: 700; letter-spacing: .15em; text-transform: uppercase; color: #06b6d4; margin: 0 0 12px;">Siapa Kami</p>
+                <h2 class="gradient-text" style="font-size: clamp(2rem, 4vw, 3rem); font-weight: 900; margin: 0 0 14px;">Tentang kodi.app</h2>
+                <p style="font-size: 17px; color: #64748b; max-width: 500px; margin: 0 auto; line-height: 1.7;">
+                    Lahir dari mimpi besar: membuat belajar jadi petualangan seru bagi generasi digital.
                 </p>
             </div>
 
-            {{-- 3 Kontak Cards --}}
-            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;margin-bottom:56px">
+            {{-- Visi & Misi --}}
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; margin-bottom: 80px;">
+                <div style="background: linear-gradient(135deg, #ecfeff, #f0f9ff); border-radius: 24px; padding: 32px;">
+                    <div style="width: 48px; height: 48px; background: rgba(6,182,212,.15); border-radius: 14px; display: flex; align-items: center; justify-content: center; margin-bottom: 18px;">
+                        <svg width="24" height="24" fill="none" stroke="#06b6d4" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                        </svg>
+                    </div>
+                    <h3 style="font-size: 20px; font-weight: 800; color: #0f172a; margin: 0 0 10px;">Siapa Kami?</h3>
+                    <p style="font-size: 15px; color: #64748b; line-height: 1.75; margin: 0;">
+                        kodi.app menggabungkan animasi, game, dan tantangan interaktif agar belajar terasa seperti petualangan — bukan beban.
+                    </p>
+                </div>
 
-                {{-- Email --}}
-                <div style="background:#1e293b;border:1px solid #334155;border-radius:20px;padding:28px 24px;display:flex;align-items:flex-start;gap:18px;transition:border-color .2s"
+                <div style="background: linear-gradient(135deg, #fdf4ff, #faf5ff); border-radius: 24px; padding: 32px;">
+                    <div style="width: 48px; height: 48px; background: rgba(168,85,247,.15); border-radius: 14px; display: flex; align-items: center; justify-content: center; margin-bottom: 18px;">
+                        <svg width="24" height="24" fill="none" stroke="#a855f7" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                        </svg>
+                    </div>
+                    <h3 style="font-size: 20px; font-weight: 800; color: #0f172a; margin: 0 0 10px;">Misi Kami</h3>
+                    <p style="font-size: 15px; color: #64748b; line-height: 1.75; margin: 0;">
+                        Memberdayakan setiap anak dan remaja menemukan cara belajar yang paling mereka suka — agar setiap "Aha!" moment terjadi setiap hari.
+                    </p>
+                </div>
+            </div>
+
+            {{-- Judul Tim --}}
+            <div style="text-align: center; margin-bottom: 48px;">
+                <p style="font-size: 12px; font-weight: 700; letter-spacing: .15em; text-transform: uppercase; color: #06b6d4; margin: 0 0 12px;">The Team</p>
+                <h3 class="gradient-text" style="font-size: clamp(1.75rem, 3.5vw, 2.5rem); font-weight: 900; margin: 0 0 12px;">Tim Praktisi Kami</h3>
+                <p style="font-size: 15px; color: #94a3b8; max-width: 440px; margin: 0 auto;">
+                    Para praktisi yang mendedikasikan ilmunya untuk generasi digital Indonesia.
+                </p>
+            </div>
+
+            {{-- Bu Risda --}}
+            <div style="display: flex; justify-content: center; margin-bottom: 48px;">
+                <a href="{{ url('/profile/bu-Risda') }}" class="card-hover"
+                   style="display: block; width: 100%; max-width: 300px; border-radius: 24px; overflow: hidden; box-shadow: 0 20px 48px -12px rgba(6,182,212,.2); text-decoration: none; background: #fff;">
+                    <div style="position: relative;">
+                        <img src="{{ asset('storage/poto.jpeg') }}" alt="Bu Risda"
+                             style="width: 100%; height: 290px; object-fit: cover; display: block;">
+                        <div style="position: absolute; top: 14px; left: 50%; transform: translateX(-50%);">
+                            <span style="padding: 5px 16px; background: linear-gradient(135deg,#06b6d4,#a855f7); color: #fff; font-size: 11px; font-weight: 800; border-radius: 20px; letter-spacing: .1em; text-transform: uppercase; white-space: nowrap;">
+                                The Leader
+                            </span>
+                        </div>
+                    </div>
+                    <div style="padding: 22px; text-align: center; background: linear-gradient(180deg, #ecfeff, #fff);">
+                        <h4 style="font-size: 16px; font-weight: 800; color: #0f172a; margin: 0 0 4px;">Risda Ayulia Apandi, S.Pd.</h4>
+                        <p style="font-size: 13px; font-weight: 700; color: #06b6d4; margin: 0 0 2px;">Guru Koding</p>
+                        <p style="font-size: 12px; color: #94a3b8; margin: 0 0 14px;">Pendidik & Inisiator kodi.app</p>
+                        <span style="display: inline-block; padding: 8px 20px; background: linear-gradient(135deg,#06b6d4,#a855f7); color: #fff; font-size: 13px; font-weight: 700; border-radius: 20px;">
+                            Lihat Portofolio
+                        </span>
+                    </div>
+                </a>
+            </div>
+
+            {{-- Divider Tim Pengembang --}}
+            <div style="display: flex; align-items: center; gap: 16px; max-width: 480px; margin: 0 auto 36px;">
+                <div style="flex: 1; height: 1px; background: linear-gradient(90deg, transparent, #e2e8f0);"></div>
+                <p style="font-size: 11px; font-weight: 700; letter-spacing: .15em; text-transform: uppercase; color: #cbd5e1; white-space: nowrap; margin: 0;">Tim Pengembang</p>
+                <div style="flex: 1; height: 1px; background: linear-gradient(90deg, #e2e8f0, transparent);"></div>
+            </div>
+
+            {{-- Aris & Alwi --}}
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 24px; max-width: 540px; margin: 0 auto 80px;">
+                <div class="card-hover" style="background: #fff; border-radius: 20px; overflow: hidden; box-shadow: 0 8px 24px -6px rgba(0,0,0,.1);">
+                    <img src="https://avatars.githubusercontent.com/u/219940777?v=4" alt="Aris Sunandar"
+                         style="width: 100%; height: 200px; object-fit: cover; display: block;">
+                    <div style="padding: 18px; text-align: center; background: linear-gradient(180deg,#faf5ff,#fff);">
+                        <h4 style="font-size: 14px; font-weight: 700; color: #0f172a; margin: 0 0 4px;">Aris Sunandar, A.Md.Kom., CEH.</h4>
+                        <p style="font-size: 12px; font-weight: 600; color: #9333ea; margin: 0;">Frontend Developer</p>
+                    </div>
+                </div>
+
+                <div class="card-hover" style="background: #fff; border-radius: 20px; overflow: hidden; box-shadow: 0 8px 24px -6px rgba(0,0,0,.1);">
+                    <img src="https://media.licdn.com/dms/image/v2/D5603AQHebX5W-ckZoQ/profile-displayphoto-scale_200_200/B56ZwETLRtKsAY-/0/1769598662550?e=2147483647&v=beta&t=fJOX3_iINZkHdIk2ihjHMR75in6j-c9vmvaoqTwb3Mc"
+                         alt="Alwi Nurfaizi" style="width: 100%; height: 200px; object-fit: cover; display: block;">
+                    <div style="padding: 18px; text-align: center; background: linear-gradient(180deg,#fffbeb,#fff);">
+                        <h4 style="font-size: 14px; font-weight: 700; color: #0f172a; margin: 0 0 4px;">Alwi Nurfaizi, S.Kom.</h4>
+                        <p style="font-size: 12px; font-weight: 600; color: #d97706; margin: 0;">Backend Developer</p>
+                    </div>
+                </div>
+            </div>
+
+            {{-- ===== PORTAL ===== --}}
+            <div style="text-align: center; margin-bottom: 48px;">
+                <p style="font-size: 12px; font-weight: 700; letter-spacing: .15em; text-transform: uppercase; color: #06b6d4; margin: 0 0 12px;">Pilih Peranmu</p>
+                <h3 class="gradient-text" style="font-size: clamp(1.75rem, 3.5vw, 2.5rem); font-weight: 900; margin: 0 0 12px;">Masuk ke Portal</h3>
+                <p style="font-size: 15px; color: #64748b; max-width: 380px; margin: 0 auto;">
+                    Pilih portal sesuai peranmu dan mulai belajar!
+                </p>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; max-width: 880px; margin: 0 auto;">
+
+                {{-- Portal Guru --}}
+                <div style="border-radius: 24px; overflow: hidden; box-shadow: 0 16px 40px -12px rgba(99,102,241,.2);">
+                    <div style="padding: 36px 28px; text-align: center; background: linear-gradient(135deg, #6366f1, #7c3aed);">
+                        <div style="width: 56px; height: 56px; background: rgba(255,255,255,.15); border-radius: 16px; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
+                            <svg width="28" height="28" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222"/>
+                            </svg>
+                        </div>
+                        <h4 style="font-size: 22px; font-weight: 900; color: #fff; margin: 0 0 6px;">Portal Guru</h4>
+                        <p style="font-size: 13px; color: rgba(255,255,255,.75); margin: 0;">Kelola kelas & pantau perkembangan siswa</p>
+                    </div>
+                    <div style="padding: 24px 28px 28px; background: #fff;">
+                        @php $guruFeatures = [
+                            ['Buat & kelola E-Modul', 'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253'],
+                            ['Buat soal kuis interaktif', 'M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z'],
+                            ['Nilai proyek siswa', 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z'],
+                            ['Pantau ranking & progress', 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z'],
+                        ]; @endphp
+                        <ul style="list-style: none; margin: 0 0 22px; padding: 0; display: flex; flex-direction: column; gap: 12px;">
+                            @foreach($guruFeatures as [$txt, $path])
+                            <li style="display: flex; align-items: center; gap: 10px; font-size: 14px; color: #475569; font-weight: 500;">
+                                <div style="width: 32px; height: 32px; background: #ede9fe; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                    <svg width="16" height="16" fill="none" stroke="#7c3aed" stroke-width="2" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="{{ $path }}"/>
+                                    </svg>
+                                </div>
+                                {{ $txt }}
+                            </li>
+                            @endforeach
+                        </ul>
+                        <div style="display: flex; gap: 10px;">
+                            <a href="{{ route('demo.guru') }}"
+                               style="flex: 1; padding: 12px; text-align: center; font-size: 13px; font-weight: 700; color: #6366f1; background: #eef2ff; border-radius: 12px; text-decoration: none;">
+                                Lihat Demo
+                            </a>
+                            @if(auth()->check() && auth()->user()->isGuru())
+                                <a href="{{ route('guru.home') }}"
+                                   style="flex: 1; padding: 12px; text-align: center; font-size: 13px; font-weight: 700; color: #fff; background: linear-gradient(135deg,#6366f1,#7c3aed); border-radius: 12px; text-decoration: none;">
+                                    Dashboard
+                                </a>
+                            @else
+                                <a href="{{ route('login') }}"
+                                   style="flex: 1; padding: 12px; text-align: center; font-size: 13px; font-weight: 700; color: #fff; background: linear-gradient(135deg,#6366f1,#7c3aed); border-radius: 12px; text-decoration: none;">
+                                    Login
+                                </a>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Portal Murid --}}
+                <div style="border-radius: 24px; overflow: hidden; box-shadow: 0 16px 40px -12px rgba(236,72,153,.2);">
+                    <div style="padding: 36px 28px; text-align: center; background: linear-gradient(135deg, #ec4899, #a855f7);">
+                        <div style="width: 56px; height: 56px; background: rgba(255,255,255,.15); border-radius: 16px; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
+                            <svg width="28" height="28" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
+                            </svg>
+                        </div>
+                        <h4 style="font-size: 22px; font-weight: 900; color: #fff; margin: 0 0 6px;">Portal Murid</h4>
+                        <p style="font-size: 13px; color: rgba(255,255,255,.75); margin: 0;">Belajar seru, kumpulkan poin & raih juara!</p>
+                    </div>
+                    <div style="padding: 24px 28px 28px; background: #fff;">
+                        @php $muridFeatures = [
+                            ['Pelajari E-Modul interaktif', 'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253'],
+                            ['Kerjakan kuis & tantangan', 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z'],
+                            ['Coding di Block Playground', 'M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4'],
+                            ['Bersaing di papan ranking', 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z'],
+                        ]; @endphp
+                        <ul style="list-style: none; margin: 0 0 22px; padding: 0; display: flex; flex-direction: column; gap: 12px;">
+                            @foreach($muridFeatures as [$txt, $path])
+                            <li style="display: flex; align-items: center; gap: 10px; font-size: 14px; color: #475569; font-weight: 500;">
+                                <div style="width: 32px; height: 32px; background: #fce7f3; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                    <svg width="16" height="16" fill="none" stroke="#ec4899" stroke-width="2" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="{{ $path }}"/>
+                                    </svg>
+                                </div>
+                                {{ $txt }}
+                            </li>
+                            @endforeach
+                        </ul>
+                        <div style="display: flex; gap: 10px;">
+                            <a href="{{ route('demo.siswa') }}"
+                               style="flex: 1; padding: 12px; text-align: center; font-size: 13px; font-weight: 700; color: #ec4899; background: #fdf2f8; border-radius: 12px; text-decoration: none;">
+                                Lihat Demo
+                            </a>
+                            @if(auth()->check() && auth()->user()->isSiswa())
+                                <a href="{{ route('siswa.home') }}"
+                                   style="flex: 1; padding: 12px; text-align: center; font-size: 13px; font-weight: 700; color: #fff; background: linear-gradient(135deg,#ec4899,#a855f7); border-radius: 12px; text-decoration: none;">
+                                    Dashboard
+                                </a>
+                            @else
+                                <a href="{{ route('login') }}"
+                                   style="flex: 1; padding: 12px; text-align: center; font-size: 13px; font-weight: 700; color: #fff; background: linear-gradient(135deg,#ec4899,#a855f7); border-radius: 12px; text-decoration: none;">
+                                    Login
+                                </a>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    {{-- ===== KONTAK ===== --}}
+    <section id="kontak" style="background: #0f172a; padding: 96px 24px;">
+        <div style="max-width: 1100px; margin: 0 auto;">
+
+            <div style="text-align: center; margin-bottom: 64px;">
+                <p style="font-size: 12px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; color: #06b6d4; margin: 0 0 12px;">Hubungi Kami</p>
+                <h2 style="font-size: clamp(2rem, 5vw, 3rem); font-weight: 900; color: #fff; margin: 0 0 14px; line-height: 1.2;">Punya Pertanyaan?</h2>
+                <p style="font-size: 16px; color: #94a3b8; max-width: 480px; margin: 0 auto; line-height: 1.7;">
+                    Saran, kritik, atau ingin berkolaborasi? Tim kodi.app selalu terbuka dan siap merespons.
+                </p>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 18px; margin-bottom: 56px;">
+
+                <div style="background: #1e293b; border: 1px solid #334155; border-radius: 20px; padding: 26px 22px; display: flex; align-items: flex-start; gap: 16px; transition: border-color .2s;"
                      onmouseenter="this.style.borderColor='#06b6d4'" onmouseleave="this.style.borderColor='#334155'">
-                    <div style="width:48px;height:48px;border-radius:14px;background:rgba(6,182,212,.12);display:flex;align-items:center;justify-content:center;flex-shrink:0">
-                        <svg width="22" height="22" fill="none" stroke="#06b6d4" stroke-width="2" viewBox="0 0 24 24">
+                    <div style="width: 44px; height: 44px; border-radius: 12px; background: rgba(6,182,212,.12); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                        <svg width="20" height="20" fill="none" stroke="#06b6d4" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                         </svg>
                     </div>
                     <div>
-                        <p style="font-size:12px;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px">Email</p>
-                        <p style="font-size:16px;font-weight:700;color:white">maliberyu@gmail.com</p>
-                        <p style="font-size:13px;color:#64748b;margin-top:4px">Respons dalam 1×24 jam</p>
+                        <p style="font-size: 11px; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: .1em; margin: 0 0 5px;">Email</p>
+                        <p style="font-size: 15px; font-weight: 700; color: #fff; margin: 0 0 3px;">maliberyu@gmail.com</p>
+                        <p style="font-size: 12px; color: #64748b; margin: 0;">Respons dalam 1x24 jam</p>
                     </div>
                 </div>
 
-                {{-- Instagram --}}
-                <div style="background:#1e293b;border:1px solid #334155;border-radius:20px;padding:28px 24px;display:flex;align-items:flex-start;gap:18px"
+                <div style="background: #1e293b; border: 1px solid #334155; border-radius: 20px; padding: 26px 22px; display: flex; align-items: flex-start; gap: 16px; transition: border-color .2s;"
                      onmouseenter="this.style.borderColor='#e879f9'" onmouseleave="this.style.borderColor='#334155'">
-                    <div style="width:48px;height:48px;border-radius:14px;background:rgba(232,121,249,.12);display:flex;align-items:center;justify-content:center;flex-shrink:0">
-                        <svg width="22" height="22" fill="none" stroke="#e879f9" stroke-width="2" viewBox="0 0 24 24">
+                    <div style="width: 44px; height: 44px; border-radius: 12px; background: rgba(232,121,249,.12); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                        <svg width="20" height="20" fill="none" stroke="#e879f9" stroke-width="2" viewBox="0 0 24 24">
                             <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
                             <circle cx="12" cy="12" r="4"/>
                             <circle cx="17.5" cy="6.5" r="1" fill="#e879f9" stroke="none"/>
                         </svg>
                     </div>
                     <div>
-                        <p style="font-size:12px;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px">Instagram</p>
-                        <p style="font-size:16px;font-weight:700;color:white">@kodi.app</p>
-                        <p style="font-size:13px;color:#64748b;margin-top:4px">Update & konten terbaru</p>
+                        <p style="font-size: 11px; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: .1em; margin: 0 0 5px;">Instagram</p>
+                        <p style="font-size: 15px; font-weight: 700; color: #fff; margin: 0 0 3px;">@kodi.app</p>
+                        <p style="font-size: 12px; color: #64748b; margin: 0;">Update & konten terbaru</p>
                     </div>
                 </div>
 
-                {{-- WhatsApp --}}
                 <a href="https://whatsapp.com/channel/0029Vay0hFn2v1IrMtLECk0M"
-                   style="background:#1e293b;border:1px solid #334155;border-radius:20px;padding:28px 24px;display:flex;align-items:flex-start;gap:18px;text-decoration:none"
+                   style="background: #1e293b; border: 1px solid #334155; border-radius: 20px; padding: 26px 22px; display: flex; align-items: flex-start; gap: 16px; text-decoration: none; transition: border-color .2s;"
                    onmouseenter="this.style.borderColor='#22c55e'" onmouseleave="this.style.borderColor='#334155'">
-                    <div style="width:48px;height:48px;border-radius:14px;background:rgba(34,197,94,.12);display:flex;align-items:center;justify-content:center;flex-shrink:0">
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="#22c55e">
+                    <div style="width: 44px; height: 44px; border-radius: 12px; background: rgba(34,197,94,.12); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="#22c55e">
                             <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
                         </svg>
                     </div>
                     <div>
-                        <p style="font-size:12px;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px">WhatsApp Channel</p>
-                        <p style="font-size:16px;font-weight:700;color:white">kodi.app Official</p>
-                        <p style="font-size:13px;color:#22c55e;margin-top:4px;font-weight:600">Klik untuk bergabung →</p>
+                        <p style="font-size: 11px; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: .1em; margin: 0 0 5px;">WhatsApp Channel</p>
+                        <p style="font-size: 15px; font-weight: 700; color: #fff; margin: 0 0 3px;">kodi.app Official</p>
+                        <p style="font-size: 12px; color: #22c55e; font-weight: 600; margin: 0;">Klik untuk bergabung</p>
                     </div>
                 </a>
 
             </div>
 
-            {{-- Divider --}}
-            <div style="height:1px;background:linear-gradient(90deg,transparent,#334155,transparent);margin-bottom:48px"></div>
+            <div style="height: 1px; background: linear-gradient(90deg, transparent, #334155, transparent); margin-bottom: 48px;"></div>
 
-            {{-- Mission Statement --}}
-            <div style="text-align:center">
-                <p style="font-size:15px;color:#475569;max-width:640px;margin:0 auto;line-height:1.8;font-style:italic">
-                    "Kami percaya bahwa setiap anak berhak mendapatkan pendidikan yang menyenangkan, bermakna, dan relevan dengan masa depan. kodi.app hadir sebagai jembatan antara teknologi dan semangat belajar."
+            <div style="text-align: center;">
+                <p style="font-size: 15px; color: #475569; max-width: 600px; margin: 0 auto; line-height: 1.8; font-style: italic;">
+                    "Kami percaya bahwa setiap anak berhak mendapatkan pendidikan yang menyenangkan, bermakna, dan relevan dengan masa depan."
                 </p>
-                <p style="font-size:13px;color:#334155;margin-top:16px;font-weight:700">— Tim kodi.app</p>
+                <p style="font-size: 13px; color: #334155; margin: 16px 0 0; font-weight: 700;">— Tim kodi.app</p>
             </div>
 
         </div>
     </section>
 
-    <!-- ===== FOOTER ===== -->
-    <footer style="background:#020617;padding:64px 24px 0">
-        <div style="max-width:1100px;margin:0 auto">
+    {{-- ===== FOOTER ===== --}}
+    <footer style="background: #020617; padding: 64px 24px 0;">
+        <div style="max-width: 1100px; margin: 0 auto;">
 
-            {{-- Top grid --}}
-            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:48px;padding-bottom:56px;border-bottom:1px solid #1e293b">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 48px; padding-bottom: 56px; border-bottom: 1px solid #1e293b;">
 
-                {{-- Brand --}}
                 <div>
-                    <p style="font-size:28px;font-weight:900;background:linear-gradient(90deg,#06b6d4,#e879f9);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:12px">
-                        kodi.app
+                    <p class="gradient-text" style="font-size: 24px; font-weight: 900; margin: 0 0 12px;">kodi.app</p>
+                    <p style="font-size: 14px; color: #64748b; line-height: 1.7; max-width: 220px; margin: 0 0 20px;">
+                        Platform belajar koding interaktif untuk generasi digital Indonesia.
                     </p>
-                    <p style="font-size:14px;color:#64748b;line-height:1.7;max-width:240px">
-                        Platform belajar koding interaktif untuk generasi digital Indonesia yang penuh semangat.
-                    </p>
-                    <div style="display:flex;gap:8px;margin-top:20px;flex-wrap:wrap">
-                        <span style="font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;background:#1e293b;color:#06b6d4;border:1px solid #334155">Laravel</span>
-                        <span style="font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;background:#1e293b;color:#a855f7;border:1px solid #334155">Tailwind</span>
-                        <span style="font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;background:#1e293b;color:#f59e0b;border:1px solid #334155">Alpine.js</span>
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                        <span style="font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 20px; background: #1e293b; color: #06b6d4; border: 1px solid #334155;">Laravel</span>
+                        <span style="font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 20px; background: #1e293b; color: #a855f7; border: 1px solid #334155;">Tailwind</span>
+                        <span style="font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 20px; background: #1e293b; color: #f59e0b; border: 1px solid #334155;">Alpine.js</span>
                     </div>
                 </div>
 
-                {{-- Navigasi --}}
                 <div>
-                    <p style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.15em;color:#475569;margin-bottom:20px">Navigasi</p>
-                    <ul style="list-style:none;display:flex;flex-direction:column;gap:12px">
+                    <p style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .15em; color: #475569; margin: 0 0 20px;">Navigasi</p>
+                    <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 12px;">
                         @foreach([['#','Beranda'],['#tentang-kami','Tentang Kami'],['#kontak','Kontak'],['','Portal Guru'],['','Portal Murid']] as [$href,$label])
                         <li>
                             <a href="{{ $href ?: route('login') }}"
-                               style="font-size:14px;color:#64748b;text-decoration:none;transition:color .15s"
+                               style="font-size: 14px; color: #64748b; text-decoration: none;"
                                onmouseenter="this.style.color='#e2e8f0'" onmouseleave="this.style.color='#64748b'">
                                 {{ $label }}
                             </a>
@@ -446,31 +648,29 @@
                     </ul>
                 </div>
 
-                {{-- Platform --}}
                 <div>
-                    <p style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.15em;color:#475569;margin-bottom:20px">Platform</p>
-                    <ul style="list-style:none;display:flex;flex-direction:column;gap:12px">
-                        @foreach([['E-Modul','Materi visual & video'],['Kuis Interaktif','Soal pilihan ganda'],['Block Playground','Koding drag & drop'],['Papan Ranking','Kompetisi sehat']] as [$nama,$desc])
+                    <p style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .15em; color: #475569; margin: 0 0 20px;">Platform</p>
+                    <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 14px;">
+                        @foreach([['E-Modul','Materi visual & video'],['Kuis Interaktif','Soal pilihan ganda'],['Playground','Koding drag & drop'],['Papan Ranking','Kompetisi sehat']] as [$nama,$desc])
                         <li>
-                            <p style="font-size:14px;color:#e2e8f0;font-weight:600">{{ $nama }}</p>
-                            <p style="font-size:12px;color:#475569;margin-top:2px">{{ $desc }}</p>
+                            <p style="font-size: 14px; color: #e2e8f0; font-weight: 600; margin: 0;">{{ $nama }}</p>
+                            <p style="font-size: 12px; color: #475569; margin: 2px 0 0;">{{ $desc }}</p>
                         </li>
                         @endforeach
                     </ul>
                 </div>
 
-                {{-- CTA --}}
                 <div>
-                    <p style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.15em;color:#475569;margin-bottom:20px">Mulai Sekarang</p>
-                    <p style="font-size:14px;color:#64748b;line-height:1.7;margin-bottom:20px">
-                        Bergabung dengan ribuan siswa yang sudah merasakan serunya belajar di kodi.app.
+                    <p style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .15em; color: #475569; margin: 0 0 20px;">Mulai Sekarang</p>
+                    <p style="font-size: 14px; color: #64748b; line-height: 1.7; margin: 0 0 20px;">
+                        Bergabung dan rasakan serunya belajar di kodi.app.
                     </p>
                     <a href="{{ route('register') }}"
-                       style="display:inline-block;padding:12px 24px;border-radius:14px;font-size:14px;font-weight:700;color:white;text-decoration:none;background:linear-gradient(135deg,#06b6d4,#a855f7);box-shadow:0 8px 25px -6px rgba(6,182,212,.4)">
+                       style="display: block; padding: 12px 24px; border-radius: 12px; font-size: 14px; font-weight: 700; color: #fff; text-decoration: none; background: linear-gradient(135deg,#06b6d4,#a855f7); text-align: center; margin-bottom: 10px;">
                         Daftar Gratis
                     </a>
                     <a href="{{ route('login') }}"
-                       style="display:inline-block;margin-top:10px;padding:12px 24px;border-radius:14px;font-size:14px;font-weight:700;color:#94a3b8;text-decoration:none;border:1px solid #1e293b;transition:border-color .2s"
+                       style="display: block; padding: 12px 24px; border-radius: 12px; font-size: 14px; font-weight: 700; color: #94a3b8; text-decoration: none; border: 1px solid #1e293b; text-align: center; transition: all .2s;"
                        onmouseenter="this.style.borderColor='#334155';this.style.color='#e2e8f0'" onmouseleave="this.style.borderColor='#1e293b';this.style.color='#94a3b8'">
                         Masuk
                     </a>
@@ -478,29 +678,124 @@
 
             </div>
 
-            {{-- Bottom bar --}}
-            <div style="padding:24px 0;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px">
-                <p style="font-size:13px;color:#334155">
-                    © 2025 <span style="color:#475569;font-weight:600">kodi.app</span> — Dibuat dengan dedikasi penuh untuk generasi digital Indonesia.
+            <div style="padding: 24px 0; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px;">
+                <p style="font-size: 13px; color: #334155; margin: 0;">
+                    &copy; 2025 <span style="color: #475569; font-weight: 600;">kodi.app</span> — Dibuat dengan dedikasi untuk generasi digital Indonesia.
                 </p>
-                <p style="font-size:12px;color:#1e293b">
-                    Powered by
-                    <span style="color:#334155;font-weight:700">Laravel 11</span> &
-                    <span style="color:#334155;font-weight:700">Tailwind CSS</span>
+                <p style="font-size: 12px; color: #1e293b; margin: 0;">
+                    Powered by <span style="color: #334155; font-weight: 700;">Laravel 11</span> & <span style="color: #334155; font-weight: 700;">Tailwind CSS</span>
                 </p>
             </div>
 
         </div>
     </footer>
 
-    <!-- Mobile Menu Script (hanya 10 baris) -->
     <script>
-        document.getElementById('mobile-menu-btn').addEventListener('click', function() {
-            document.getElementById('mobile-menu').classList.toggle('hidden');
-        });
+        var menuOpen = false;
+
+        function toggleMenu() {
+            menuOpen = !menuOpen;
+            document.getElementById('mobile-menu').style.display  = menuOpen ? 'block' : 'none';
+            document.getElementById('icon-menu').style.display    = menuOpen ? 'none'  : 'block';
+            document.getElementById('icon-close').style.display   = menuOpen ? 'block' : 'none';
+        }
+
+        function checkWidth() {
+            var w = window.innerWidth;
+            document.getElementById('hamburger').style.display   = w < 768 ? 'block' : 'none';
+            document.getElementById('nav-links').style.display   = w < 768 ? 'none'  : 'flex';
+            if (w >= 768) {
+                document.getElementById('mobile-menu').style.display = 'none';
+                menuOpen = false;
+            }
+        }
+
+        checkWidth();
+        window.addEventListener('resize', checkWidth);
     </script>
 
-    <!-- Lottie Web Component -->
     <script src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.8.5/dist/dotlottie-wc.js" type="module"></script>
+
+    <script>
+    (function () {
+        var splinePre  = document.getElementById('spline-pre');
+        var introScr   = document.getElementById('intro-screen');
+        var center     = document.getElementById('intro-center');
+        var bar        = document.getElementById('intro-progress');
+        var loader     = document.getElementById('spline-loader');
+        var canvas     = document.getElementById('spline-canvas');
+
+        // Skip both screens if already seen this session
+        if (sessionStorage.getItem('kodi_intro_done')) {
+            splinePre.style.display = 'none';
+            introScr.style.display  = 'none';
+            return;
+        }
+
+        document.body.style.overflow = 'hidden';
+
+        var phase2Started = false;
+        var exitTriggered = false;
+
+        // ── Phase 2: fade out Spline screen → reveal dark intro ──
+        function startPhase2() {
+            if (phase2Started) return;
+            phase2Started = true;
+            loader.classList.add('hide');
+            splinePre.classList.add('fade-out');
+            setTimeout(function () { splinePre.style.display = 'none'; }, 1200);
+            setTimeout(function () {
+                center.classList.add('show');
+                bar.style.transition = 'width 2.6s linear';
+                bar.style.width = '100%';
+            }, 600);
+            setTimeout(exitIntro, 3300);
+        }
+
+        // ── Exit: fade out dark intro → welcome page ──
+        function exitIntro() {
+            if (exitTriggered) return;
+            exitTriggered = true;
+            introScr.classList.add('exit');
+            setTimeout(function () {
+                introScr.style.display = 'none';
+                document.body.style.overflow = '';
+                sessionStorage.setItem('kodi_intro_done', '1');
+            }, 900);
+        }
+
+        // ── Load Spline scene using @splinetool/runtime ──
+        var sceneUrl = canvas.getAttribute('data-url');
+        canvas.width  = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        import('https://unpkg.com/@splinetool/runtime@1.12.97/build/runtime.js')
+            .then(function (mod) {
+                var app = new mod.Application(canvas);
+                return app.load(sceneUrl);
+            })
+            .then(function () {
+                loader.classList.add('hide');
+                setTimeout(startPhase2, 1500);
+            })
+            .catch(function (err) {
+                console.warn('Spline load error:', err);
+            });
+
+        // Fallbacks so intro never hangs
+        setTimeout(startPhase2, 5000);
+        setTimeout(exitIntro, 9000);
+    })();
+    </script>
+
+    <x-pwa-install-banner />
+
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function () {
+          navigator.serviceWorker.register('{{ asset('sw.js') }}');
+        });
+      }
+    </script>
 </body>
 </html>

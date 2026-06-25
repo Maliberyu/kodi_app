@@ -17,6 +17,27 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+// PWA Manifest (dynamic agar asset() menghasilkan URL yang benar)
+Route::get('/manifest.json', function () {
+    return response()->json([
+        'name'             => 'KODI App',
+        'short_name'       => 'KODI',
+        'description'      => 'Platform Pembelajaran Kodifikasi untuk Siswa',
+        'start_url'        => url('/'),
+        'scope'            => url('/'),
+        'display'          => 'standalone',
+        'orientation'      => 'portrait',
+        'background_color' => '#7c3aed',
+        'theme_color'      => '#7c3aed',
+        'lang'             => 'id',
+        'icons'            => [
+            ['src' => asset('icon/icon.png'), 'sizes' => '192x192', 'type' => 'image/png'],
+            ['src' => asset('icon/icon.png'), 'sizes' => '512x512', 'type' => 'image/png'],
+            ['src' => asset('icon/icon.png'), 'sizes' => '512x512', 'type' => 'image/png', 'purpose' => 'maskable'],
+        ],
+    ])->header('Content-Type', 'application/manifest+json');
+})->name('pwa.manifest');
+
 Route::get('/profile/bu-Risda', function () {
     return view('profile.bu-Risda');
 });

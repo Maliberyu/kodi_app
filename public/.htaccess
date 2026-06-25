@@ -1,3 +1,15 @@
+# MIME type for Spline scene files
+<IfModule mod_mime.c>
+    AddType application/octet-stream .splinecode
+</IfModule>
+
+<IfModule mod_headers.c>
+    <FilesMatch "\.splinecode$">
+        Header set Access-Control-Allow-Origin "*"
+        Header set Cross-Origin-Resource-Policy "cross-origin"
+    </FilesMatch>
+</IfModule>
+
 <IfModule mod_rewrite.c>
     <IfModule mod_negotiation.c>
         Options -MultiViews -Indexes

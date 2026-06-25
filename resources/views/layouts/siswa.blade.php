@@ -4,6 +4,13 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>KODI - {{ $title ?? 'Siswa' }}</title>
+    <link rel="manifest" href="{{ url('/manifest.json') }}">
+    <meta name="theme-color" content="#7c3aed">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="KODI">
+    <link rel="apple-touch-icon" href="{{ asset('icon/icon.png') }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="font-sans antialiased bg-gray-50">
@@ -51,5 +58,15 @@
             </div>
         </main>
     </div>
+
+    <x-pwa-install-banner />
+
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('{{ asset('sw.js') }}');
+        });
+      }
+    </script>
 </body>
 </html>
