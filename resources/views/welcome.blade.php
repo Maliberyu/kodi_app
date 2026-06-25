@@ -19,28 +19,30 @@
 
     @vite(['resources/css/app.css'])
 
+    <script type="module" src="https://unpkg.com/@splinetool/viewer@1.12.97/build/spline-viewer.js"></script>
+
     <style>
         * { box-sizing: border-box; }
         body { font-family: 'Instrument Sans', sans-serif; margin: 0; background: linear-gradient(135deg, #f8faff 0%, #fdf4ff 50%, #f0fdff 100%); min-height: 100vh; }
 
-        /* ===== PHASE 1: SPLINE PRE-SCREEN ===== */
-        #spline-pre {
-            position: fixed; inset: 0; z-index: 10000;
-            background: linear-gradient(135deg, #f8faff 0%, #fdf4ff 50%, #f0fdff 100%);
-            overflow: hidden;
+        /* ===== PHASE 1: SPLINE VIEWER (robot humanoid) ===== */
+        #spline-intro {
+            position: fixed; top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            z-index: 10000; display: block;
             transition: opacity 1.2s cubic-bezier(.4,0,.2,1);
         }
-        #spline-pre.fade-out { opacity: 0; pointer-events: none; }
-        #spline-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+        #spline-intro.fade-out { opacity: 0; pointer-events: none; }
 
         #spline-loader {
-            position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
+            position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%);
             display: flex; align-items: center; gap: 10px;
             font-family: 'Instrument Sans', sans-serif;
             font-size: 13px; font-weight: 600; letter-spacing: .08em; color: #94a3b8;
             white-space: nowrap; transition: opacity .5s;
+            z-index: 10001;
         }
-        #spline-loader.hide { opacity: 0; }
+        #spline-loader.hide { opacity: 0; pointer-events: none; }
         .loader-dots { display: flex; gap: 5px; }
         .loader-dots span {
             width: 7px; height: 7px; border-radius: 50%;
@@ -185,13 +187,11 @@
 
 <body>
 
-    {{-- ===== PHASE 1: Spline scene (clean, no overlay) ===== --}}
-    <div id="spline-pre">
-        <canvas id="spline-canvas" data-url="{{ asset('scene.splinecode') }}"></canvas>
-        <div id="spline-loader">
-            <div class="loader-dots"><span></span><span></span><span></span></div>
-            <span>memuat scene...</span>
-        </div>
+    {{-- ===== PHASE 1: Spline scene (robot humanoid) ===== --}}
+    <spline-viewer id="spline-intro" url="{{ asset('scene.splinecode') }}"></spline-viewer>
+    <div id="spline-loader">
+        <div class="loader-dots"><span></span><span></span><span></span></div>
+        <span>memuat scene...</span>
     </div>
 
     {{-- ===== PHASE 2: Dark intro screen (kodi.app text) ===== --}}
@@ -718,17 +718,16 @@
 
     <script>
     (function () {
-        var splinePre  = document.getElementById('spline-pre');
-        var introScr   = document.getElementById('intro-screen');
-        var center     = document.getElementById('intro-center');
-        var bar        = document.getElementById('intro-progress');
-        var loader     = document.getElementById('spline-loader');
-        var canvas     = document.getElementById('spline-canvas');
+        var splineEl  = document.getElementById('spline-intro');
+        var introScr  = document.getElementById('intro-screen');
+        var center    = document.getElementById('intro-center');
+        var bar       = document.getElementById('intro-progress');
+        var loader    = document.getElementById('spline-loader');
 
-        // Skip both screens if already seen this session
         if (sessionStorage.getItem('kodi_intro_done')) {
-            splinePre.style.display = 'none';
-            introScr.style.display  = 'none';
+            splineEl.style.display = 'none';
+            loader.style.display   = 'none';
+            introScr.style.display = 'none';
             return;
         }
 
@@ -737,13 +736,12 @@
         var phase2Started = false;
         var exitTriggered = false;
 
-        // ── Phase 2: fade out Spline screen → reveal dark intro ──
         function startPhase2() {
             if (phase2Started) return;
             phase2Started = true;
             loader.classList.add('hide');
-            splinePre.classList.add('fade-out');
-            setTimeout(function () { splinePre.style.display = 'none'; }, 1200);
+            splineEl.classList.add('fade-out');
+            setTimeout(function () { splineEl.style.display = 'none'; }, 1200);
             setTimeout(function () {
                 center.classList.add('show');
                 bar.style.transition = 'width 2.6s linear';
@@ -752,7 +750,6 @@
             setTimeout(exitIntro, 3300);
         }
 
-        // ── Exit: fade out dark intro → welcome page ──
         function exitIntro() {
             if (exitTriggered) return;
             exitTriggered = true;
@@ -764,25 +761,11 @@
             }, 900);
         }
 
-        // ── Load Spline scene using @splinetool/runtime ──
-        var sceneUrl = canvas.getAttribute('data-url');
-        canvas.width  = window.innerWidth;
-        canvas.height = window.innerHeight;
+        splineEl.addEventListener('load-complete', function () {
+            loader.classList.add('hide');
+            setTimeout(startPhase2, 1500);
+        });
 
-        import('https://unpkg.com/@splinetool/runtime@1.12.97/build/runtime.js')
-            .then(function (mod) {
-                var app = new mod.Application(canvas);
-                return app.load(sceneUrl);
-            })
-            .then(function () {
-                loader.classList.add('hide');
-                setTimeout(startPhase2, 1500);
-            })
-            .catch(function (err) {
-                console.warn('Spline load error:', err);
-            });
-
-        // Fallbacks so intro never hangs
         setTimeout(startPhase2, 5000);
         setTimeout(exitIntro, 9000);
     })();
