@@ -26,10 +26,10 @@
             <div class="bg-white rounded-xl border border-slate-200 p-6 mb-5">
                 <div class="flex items-center gap-3 mb-4">
                     <div class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-sm font-bold text-indigo-700">
-                        {{ $proyek->siswa->initials() }}
+                        {{ $proyek->siswa?->initials() ?? '?' }}
                     </div>
                     <div>
-                        <p class="font-semibold text-slate-800">{{ $proyek->siswa->nama_lengkap ?? $proyek->siswa->name }}</p>
+                        <p class="font-semibold text-slate-800">{{ $proyek->siswa?->nama_lengkap ?? $proyek->siswa?->name ?? 'Siswa' }}</p>
                         <p class="text-xs text-slate-400">{{ $proyek->created_at->format('d M Y, H:i') }}</p>
                     </div>
                 </div>
@@ -92,6 +92,12 @@
                                   class="w-full px-4 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none resize-none">{{ old('komentar', $proyek->penilaian?->komentar ?? '') }}</textarea>
                         @error('komentar') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
+
+                    @if(session('success'))
+                        <div class="px-4 py-3 bg-green-50 border border-green-200 text-green-700 rounded-lg text-sm">
+                            {{ session('success') }}
+                        </div>
+                    @endif
 
                     <div class="pt-2 border-t border-slate-100">
                         <button type="submit"

@@ -50,13 +50,13 @@ class ProyekController extends Controller
         ])->save();
 
         // Tambah koin ke siswa hanya jika penilaian baru (bukan update)
-        if ($penilaianBaru && $validated['poin_bonus'] > 0) {
+        if ($penilaianBaru && $validated['poin_bonus'] > 0 && $proyek->siswa) {
             $proyek->siswa->increment('koin', $validated['poin_bonus']);
         }
 
         $proyek->update(['status' => 'dinilai']);
 
         return redirect()->route('guru.proyek.show', $id)
-            ->with('success', 'Penilaian berhasil disimpan!');
+            ->with('success', '✅ Penilaian berhasil disimpan!');
     }
 }
