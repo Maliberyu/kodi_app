@@ -11,6 +11,11 @@ return new class extends Migration
      */
    public function up()
 {
+    // Tabel sudah dibuat oleh 2025_11_27_124630_create_quiz_questions_table
+    if (Schema::hasTable('quiz_questions')) {
+        return;
+    }
+
     Schema::create('quiz_questions', function (Blueprint $table) {
         $table->id();
         $table->foreignId('quiz_id')->constrained('quizzes')->onDelete('cascade');

@@ -14,7 +14,7 @@
                 <h1 class="text-3xl font-bold text-purple-600">KODI Admin Panel</h1>
                 <div class="flex items-center gap-4">
                     <span class="text-gray-700">Halo, {{ auth()->user()->name }} (Admin)</span>
-                    <a href="{{ route('dashboard') }}" class="text-purple-600 hover:underline">Kembali ke App</a>
+                    <a href="{{ route('home') }}" class="text-purple-600 hover:underline">Kembali ke App</a>
                     <form method="POST" action="{{ route('logout') }}" class="inline">
                         @csrf
                         <button class="text-red-600 hover:underline">Logout</button>

@@ -56,7 +56,7 @@ Route::get('/home', function () {
         'ortu'  => redirect()->route('ortu.home'),
         'guru'  => redirect()->route('guru.home'),
         'siswa' => redirect()->route('siswa.home'),
-        default => redirect()->route('home'),
+        default => redirect('/'),
     };
 })->middleware('auth')->name('home');
 
